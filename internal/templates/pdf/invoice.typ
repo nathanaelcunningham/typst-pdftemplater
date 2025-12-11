@@ -105,22 +105,22 @@
 
       // Shipping Address
       [
-        #text(size: 13pt)[
+        #text(size: 13pt, hyphenate: true)[
           *Shipping Address*\
           John Smith\
           456 Oak Street Apt 2B\
-          Portland, OR 97201\
+          CChaubunagungamaugChaubunagungamaughaubunagungamaug, OR 97201\
           United States
         ]
       ],
 
       // Billing Address
       [
-        #text(size: 13pt)[
+        #text(size: 13pt, hyphenate: true)[
           *Billing Address*\
           John Smith\
           456 Oak Street Apt 2B\
-          Portland, OR 97201\
+          Chaubunagungamaug, OR 97201\
           United States
         ]
       ]
