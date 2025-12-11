@@ -8,6 +8,6 @@ services:
     ports:
       - "1235:1234"
     volumes:
-      - .:/app
+      - ./backend:/app
     extra_hosts:
       - "host.docker.internal:host-gateway"
