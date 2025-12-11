@@ -4,6 +4,7 @@ WORKDIR /app
 
 RUN apk add --no-cache typst
 
+
 RUN addgroup -S appuser && adduser -S appuser -G appuser
 
 COPY ./go.mod ./go.sum ./
@@ -14,6 +15,11 @@ RUN go install github.com/air-verse/air@v1.62.0
 RUN go build -o api ./cmd/api
 
 RUN chown appuser:appuser /app/api
+
+RUN mkdir -p /usr/share/fonts/custom_fonts
+COPY ./assets/Poppins /usr/share/fonts/custom_fonts
+RUN apk add --no-cache fontconfig
+RUN fc-cache -f -v
 
 EXPOSE 1234
 

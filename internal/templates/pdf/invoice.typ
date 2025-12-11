@@ -3,7 +3,7 @@
   margin: (x: 0.5in, y: 0.5in),
 )
 #set text(
-  font: "Arial",
+  font: "Poppins",
   size: 11pt,
 )
 
