@@ -1,0 +1,21 @@
+FROM golang:1.25-alpine AS builder
+
+WORKDIR /app
+
+RUN apk add --no-cache typst
+
+RUN addgroup -S appuser && adduser -S appuser -G appuser
+
+COPY ./go.mod ./go.sum ./
+COPY ./ .
+
+RUN go mod download
+RUN go install github.com/air-verse/air@v1.62.0
+RUN go build -o api ./cmd/api
+
+RUN chown appuser:appuser /app/api
+
+EXPOSE 1234
+
+CMD ["air", "-c", ".air.toml"]
+
