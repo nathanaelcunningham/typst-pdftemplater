@@ -34,7 +34,6 @@ interface TemplateStore extends TemplateState {
     removeGridColumn: (containerId: string, columnIndex: number) => void;
     updateGridColumnWidth: (containerId: string, columnIndex: number, width: number) => void;
     updateChildGridPosition: (containerId: string, childId: string, position: GridPosition) => void;
-    migrateGridContainers: () => void;
 
     // Variable actions
     addVariable: (variable: Variable) => void;
@@ -515,42 +514,6 @@ export const useTemplateStore = create<TemplateStore>()(
                 }
 
                 child.position = position;
-            }),
-
-        migrateGridContainers: () =>
-            set((state) => {
-                state.components.forEach(component => {
-                    if (component.type === 'grid-container' && component.children) {
-                        const props = component.props as GridContainerProps;
-                        let needsColumnUpdate = false;
-                        let maxColumnIndex = -1;
-
-                        // Migrate children from RelativePosition to GridPosition
-                        component.children.forEach(child => {
-                            if (hasRelativePosition(child.position)) {
-                                // Convert index to columnIndex
-                                const columnIndex = child.position.index;
-                                child.position = {
-                                    type: 'grid',
-                                    columnIndex: columnIndex,
-                                    span: 1
-                                };
-                                needsColumnUpdate = true;
-                                maxColumnIndex = Math.max(maxColumnIndex, columnIndex);
-                            } else if (hasGridPosition(child.position)) {
-                                maxColumnIndex = Math.max(maxColumnIndex, child.position.columnIndex);
-                            }
-                        });
-
-                        // Ensure columns array is large enough
-                        if (needsColumnUpdate && maxColumnIndex >= 0) {
-                            const requiredColumns = maxColumnIndex + 1;
-                            if (props.columns.length < requiredColumns) {
-                                props.columns = Array(requiredColumns).fill(1);
-                            }
-                        }
-                    }
-                });
             }),
     }))
 );

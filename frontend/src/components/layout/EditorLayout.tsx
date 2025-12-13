@@ -21,7 +21,6 @@ export function EditorLayout() {
         components,
         addToContainer,
         addGridColumn,
-        migrateGridContainers,
     } = useTemplateStore();
 
     const sensors = useSensors(

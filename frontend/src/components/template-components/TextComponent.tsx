@@ -20,6 +20,7 @@ export function TextComponent({ component, isSelected, onClick }: TextComponentR
                 fontWeight: props.fontWeight,
                 textAlign: props.alignment,
                 color: props.color,
+                whiteSpace: 'pre-wrap'
             }}
         >
             {props.content || 'Empty text'}

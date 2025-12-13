@@ -17,8 +17,9 @@ export function generateTextComponent(component: ComponentInstance): string {
         params.push(`fill: rgb("${props.color}")`);
     }
 
+    const content = props.content.trimEnd().replaceAll("\n", "\\\n")
     // Build the text directive
-    let code = `#text(${params.join(', ')})[${props.content || ''}]`;
+    let code = `#text(${params.join(', ')})[${content || ''}]`;
 
     // Wrap in alignment if not left-aligned
     if (props.alignment !== 'left') {
