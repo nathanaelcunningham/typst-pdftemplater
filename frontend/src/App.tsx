@@ -1,10 +1,7 @@
-function App() {
+import { EditorLayout } from './components/layout/EditorLayout';
 
-    return (
-        <div>
-            <h1>hello world</h1>
-        </div>
-    )
+function App() {
+  return <EditorLayout />;
 }
 
-export default App
+export default App;
