@@ -47,7 +47,7 @@ interface TemplateStore extends TemplateState {
 }
 
 export const useTemplateStore = create<TemplateStore>()(
-    immer((set) => ({
+    immer((set, get) => ({
         // Initial state
         grid: {
             columns: 12,
@@ -239,7 +239,7 @@ export const useTemplateStore = create<TemplateStore>()(
 
                 if (container.type === 'grid-container') {
                     // Grid container: use GridPosition
-                    const nextCell = useTemplateStore.getState().findNextGridCell(containerId);
+                    const nextCell = get().findNextGridCell(containerId);
 
                     if (nextCell) {
                         // Empty cell available
@@ -325,7 +325,7 @@ export const useTemplateStore = create<TemplateStore>()(
 
         // Helper functions
         findParentContainer: (childId: string): ComponentInstance | null => {
-            const state = useTemplateStore.getState();
+            const state = get();
             for (const component of state.components) {
                 if (component.children) {
                     const hasChild = component.children.some((c: ComponentInstance) => c.id === childId);
@@ -336,7 +336,7 @@ export const useTemplateStore = create<TemplateStore>()(
         },
 
         getChildIndex: (containerId: string, childId: string): number => {
-            const state = useTemplateStore.getState();
+            const state = get();
             const container = state.components.find((c: ComponentInstance) => c.id === containerId);
             if (!container || !container.children) return -1;
 
@@ -345,7 +345,7 @@ export const useTemplateStore = create<TemplateStore>()(
 
         // Grid container specific actions
         findNextGridCell: (containerId: string): GridPosition | null => {
-            const state = useTemplateStore.getState();
+            const state = get();
             const container = state.components.find(c => c.id === containerId);
             if (!container || container.type !== 'grid-container') return null;
 
@@ -374,7 +374,7 @@ export const useTemplateStore = create<TemplateStore>()(
         },
 
         validateGridPosition: (containerId: string, childId: string | null, position: GridPosition) => {
-            const state = useTemplateStore.getState();
+            const state = get();
             const container = state.components.find(c => c.id === containerId);
 
             if (!container || container.type !== 'grid-container') {
@@ -420,7 +420,7 @@ export const useTemplateStore = create<TemplateStore>()(
         },
 
         canRemoveGridColumn: (containerId: string, columnIndex: number) => {
-            const state = useTemplateStore.getState();
+            const state = get();
             const container = state.components.find(c => c.id === containerId);
 
             if (!container || container.type !== 'grid-container') {
@@ -463,7 +463,7 @@ export const useTemplateStore = create<TemplateStore>()(
 
         removeGridColumn: (containerId: string, columnIndex: number) =>
             set((state) => {
-                const validation = useTemplateStore.getState()
+                const validation = get()
                     .canRemoveGridColumn(containerId, columnIndex);
 
                 if (!validation.canRemove) {
@@ -506,7 +506,7 @@ export const useTemplateStore = create<TemplateStore>()(
                 if (!child) return;
 
                 // Validate position
-                const validation = useTemplateStore.getState()
+                const validation = get()
                     .validateGridPosition(containerId, childId, position);
 
                 if (!validation.valid) {
