@@ -48,3 +48,28 @@ export const defaultTableProps: TableComponentProps = {
   ],
   borders: true,
 };
+
+export interface GridContainerProps {
+  columns: number[];                            // Column fractions [1, 2, 1] → 1fr 2fr 1fr
+  gap: number;                                  // Horizontal gap in points (default: 16)
+  rowGap?: number;                              // Vertical gap in points (optional)
+  alignment?: 'start' | 'center' | 'end' | 'stretch';  // Vertical alignment
+}
+
+export interface StackContainerProps {
+  direction: 'vertical' | 'horizontal';         // Stack direction
+  spacing: number;                              // Gap between items in points (default: 8)
+  alignment?: 'left' | 'center' | 'right';      // Horizontal alignment
+}
+
+export const defaultGridContainerProps: GridContainerProps = {
+  columns: [1],  // Start with single column
+  gap: 16,
+  alignment: 'start',
+};
+
+export const defaultStackContainerProps: StackContainerProps = {
+  direction: 'vertical',
+  spacing: 8,
+  alignment: 'left',
+};

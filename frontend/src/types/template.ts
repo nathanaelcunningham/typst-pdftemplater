@@ -1,11 +1,26 @@
 // Core template data types
 
-export type ComponentType = 'text' | 'image' | 'table';
+export type ComponentType = 'text' | 'image' | 'table' | 'grid-container' | 'stack-container';
 
-export interface Position {
-  row: number;      // Which row (0-indexed)
-  column: number;   // Starting column (0-indexed, 0-11 for 12-column grid)
-  span: number;     // How many columns to span (1-12)
+// Discriminated union for position types
+export type Position = AbsolutePosition | RelativePosition | GridPosition;
+
+export interface AbsolutePosition {
+  type: 'absolute';
+  row: number;          // Row in global grid (0-indexed)
+  column: number;       // Starting column (0-11)
+  span: number;         // Column span (1-12)
+}
+
+export interface RelativePosition {
+  type: 'relative';
+  index: number;        // Order within container (0-indexed)
+}
+
+export interface GridPosition {
+  type: 'grid';
+  columnIndex: number;  // Starting column in grid container (0-indexed)
+  span: number;         // Number of columns to span (default: 1)
 }
 
 export interface ComponentInstance {
@@ -13,6 +28,7 @@ export interface ComponentInstance {
   type: ComponentType;
   position: Position;
   props: Record<string, any>;  // Component-specific properties
+  children?: ComponentInstance[];  // Only for containers
 }
 
 export interface Variable {
@@ -35,4 +51,33 @@ export interface TemplateState {
   variables: Variable[];
   selectedComponentId: string | null;
   isDragging: boolean;
+}
+
+// Drop zone types
+export type DropZoneType =
+  | 'canvas-empty'           // Empty canvas
+  | 'canvas-new-row'         // New row below existing
+  | 'container-interior'     // Inside container
+  | 'component-above'        // Above existing (blue line)
+  | 'component-below'        // Below existing (blue line)
+  | 'component-left'         // Left of component (purple - auto-wrap)
+  | 'component-right'        // Right of component (purple - auto-wrap)
+  | 'grid-cell'              // Specific cell in grid container
+  | 'grid-overflow';         // Grid is full, add new column
+
+// Type guards
+export function isContainer(component: ComponentInstance): boolean {
+  return component.type === 'grid-container' || component.type === 'stack-container';
+}
+
+export function hasAbsolutePosition(pos: Position): pos is AbsolutePosition {
+  return pos.type === 'absolute';
+}
+
+export function hasRelativePosition(pos: Position): pos is RelativePosition {
+  return pos.type === 'relative';
+}
+
+export function hasGridPosition(pos: Position): pos is GridPosition {
+  return pos.type === 'grid';
 }

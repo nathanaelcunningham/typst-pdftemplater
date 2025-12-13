@@ -1,4 +1,5 @@
 import type { TemplateState } from '../types/template';
+import { hasAbsolutePosition } from '../types/template';
 import { componentGenerators } from './componentGenerators';
 
 export function generateTypst(state: TemplateState): string {
@@ -9,14 +10,19 @@ export function generateTypst(state: TemplateState): string {
     // Generate header
     const header = generateHeader();
 
+    // Filter to only top-level components (those with absolute positions)
+    const topLevelComponents = state.components.filter(c => hasAbsolutePosition(c.position));
+
     // Group components by row
-    const componentsByRow: Record<number, typeof state.components> = {};
-    state.components.forEach((component) => {
-        const row = component.position.row;
-        if (!componentsByRow[row]) {
-            componentsByRow[row] = [];
+    const componentsByRow: Record<number, typeof topLevelComponents> = {};
+    topLevelComponents.forEach((component) => {
+        if (hasAbsolutePosition(component.position)) {
+            const row = component.position.row;
+            if (!componentsByRow[row]) {
+                componentsByRow[row] = [];
+            }
+            componentsByRow[row].push(component);
         }
-        componentsByRow[row].push(component);
     });
 
     // Sort rows
@@ -31,9 +37,11 @@ export function generateTypst(state: TemplateState): string {
         const rowComponents = componentsByRow[rowIndex] || [];
 
         // Sort components by column
-        const sortedComponents = [...rowComponents].sort(
-            (a, b) => a.position.column - b.position.column
-        );
+        const sortedComponents = [...rowComponents].sort((a, b) => {
+            const aCol = hasAbsolutePosition(a.position) ? a.position.column : 0;
+            const bCol = hasAbsolutePosition(b.position) ? b.position.column : 0;
+            return aCol - bCol;
+        });
 
         // If only one component in the row, render it directly
         if (sortedComponents.length === 1) {
@@ -48,12 +56,14 @@ export function generateTypst(state: TemplateState): string {
             const components: string[] = [];
 
             sortedComponents.forEach((component) => {
-                const spanFraction = component.position.span / state.grid.columns;
-                colWidths.push(`${spanFraction}fr`);
+                if (hasAbsolutePosition(component.position)) {
+                    const spanFraction = component.position.span / state.grid.columns;
+                    colWidths.push(`${spanFraction}fr`);
 
-                const generator = componentGenerators[component.type];
-                if (generator) {
-                    components.push(generator(component));
+                    const generator = componentGenerators[component.type];
+                    if (generator) {
+                        components.push(generator(component));
+                    }
                 }
             });
 
