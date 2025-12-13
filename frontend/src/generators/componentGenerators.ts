@@ -101,7 +101,7 @@ export function generateGridContainerComponent(component: ComponentInstance): st
 
     // Recursively generate children
     const childCode = sorted
-        .map(child => componentGenerators[child.type]?.(child) || '')
+        .map(child => `[${componentGenerators[child.type]?.(child)}]` || '')
         .filter(Boolean)
         .join(',\n  ');
 
@@ -110,7 +110,8 @@ export function generateGridContainerComponent(component: ComponentInstance): st
     return `#grid(
   columns: (${colWidths}),
   gutter: ${props.gap}pt,
-${rowGutterLine}  ${childCode}
+${rowGutterLine}  
+${childCode}
 )`;
 }
 
