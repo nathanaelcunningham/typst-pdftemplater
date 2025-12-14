@@ -43,6 +43,10 @@ interface TemplateStore extends TemplateState {
     // Grid actions
     setGridColumns: (columns: number) => void;
     setGridGap: (gap: number) => void;
+
+    // Save/Load actions
+    saveToLocalStorage: () => void;
+    loadFromLocalStorage: () => void;
 }
 
 export const useTemplateStore = create<TemplateStore>()(
@@ -489,5 +493,38 @@ export const useTemplateStore = create<TemplateStore>()(
 
                 child.position = position;
             }),
+
+        // Save/Load actions
+        saveToLocalStorage: () => {
+            const state = get();
+            const dataToSave = {
+                grid: state.grid,
+                components: state.components,
+                variables: state.variables,
+            };
+            try {
+                localStorage.setItem('pdf-template', JSON.stringify(dataToSave));
+                console.log('Template saved to local storage');
+            } catch (error) {
+                console.error('Failed to save template:', error);
+            }
+        },
+
+        loadFromLocalStorage: () => {
+            try {
+                const saved = localStorage.getItem('pdf-template');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    set((state) => {
+                        state.grid = data.grid || state.grid;
+                        state.components = data.components || [];
+                        state.variables = data.variables || [];
+                    });
+                    console.log('Template loaded from local storage');
+                }
+            } catch (error) {
+                console.error('Failed to load template:', error);
+            }
+        },
     }))
 );

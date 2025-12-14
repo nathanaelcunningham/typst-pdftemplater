@@ -12,6 +12,7 @@ import { defaultTextProps, defaultImageProps, defaultTableProps, defaultGridCont
 
 export function EditorLayout() {
     const [showVariables, setShowVariables] = useState(false);
+    const [saveMessage, setSaveMessage] = useState('');
     const {
         addComponent,
         setDragging,
@@ -21,6 +22,8 @@ export function EditorLayout() {
         components,
         addToContainer,
         addGridColumn,
+        saveToLocalStorage,
+        loadFromLocalStorage,
     } = useTemplateStore();
 
     const sensors = useSensors(
@@ -284,6 +287,18 @@ export function EditorLayout() {
         }
     };
 
+    // Auto-load on mount
+    useEffect(() => {
+        loadFromLocalStorage();
+    }, [loadFromLocalStorage]);
+
+    // Handle save with feedback
+    const handleSave = () => {
+        saveToLocalStorage();
+        setSaveMessage('Saved!');
+        setTimeout(() => setSaveMessage(''), 2000);
+    };
+
     // Keyboard shortcuts
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -302,6 +317,12 @@ export function EditorLayout() {
             if (event.key === 'Escape' && selectedComponentId) {
                 selectComponent(null);
             }
+
+            // Save on Cmd+S / Ctrl+S
+            if ((event.metaKey || event.ctrlKey) && event.key === 's') {
+                event.preventDefault();
+                handleSave();
+            }
         };
 
         window.addEventListener('keydown', handleKeyDown);
@@ -314,7 +335,16 @@ export function EditorLayout() {
                 {/* Top Bar */}
                 <div className="h-14 bg-white border-b border-gray-200 flex items-center px-4 shadow-sm">
                     <h1 className="text-xl font-semibold text-gray-800">PDF Template Builder</h1>
-                    <div className="ml-auto flex gap-2">
+                    <div className="ml-auto flex items-center gap-2">
+                        {saveMessage && (
+                            <span className="text-sm text-green-600 font-medium">{saveMessage}</span>
+                        )}
+                        <button
+                            onClick={handleSave}
+                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                        >
+                            Save
+                        </button>
                         <button
                             onClick={() => setShowVariables(true)}
                             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
