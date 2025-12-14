@@ -6,78 +6,77 @@ export type ComponentType = 'text' | 'image' | 'table' | 'grid-container' | 'sta
 export type Position = AbsolutePosition | RelativePosition | GridPosition;
 
 export interface AbsolutePosition {
-  type: 'absolute';
-  row: number;          // Row in global grid (0-indexed)
-  column: number;       // Starting column (0-11)
-  span: number;         // Column span (1-12)
+    type: 'absolute';
+    row: number;          // Row in global grid (0-indexed)
+    column: number;       // Starting column (0-11)
+    span: number;         // Column span (1-12)
 }
 
 export interface RelativePosition {
-  type: 'relative';
-  index: number;        // Order within container (0-indexed)
+    type: 'relative';
+    index: number;        // Order within container (0-indexed)
 }
 
 export interface GridPosition {
-  type: 'grid';
-  columnIndex: number;  // Starting column in grid container (0-indexed)
-  span: number;         // Number of columns to span (default: 1)
+    type: 'grid';
+    columnIndex: number;  // Starting column in grid container (0-indexed)
+    span: number;         // Number of columns to span (default: 1)
 }
 
 export interface ComponentInstance {
-  id: string;
-  type: ComponentType;
-  position: Position;
-  props: Record<string, any>;  // Component-specific properties
-  children?: ComponentInstance[];  // Only for containers
+    id: string;
+    type: ComponentType;
+    position: Position;
+    props: Record<string, any>;  // Component-specific properties
+    children?: ComponentInstance[];  // Only for containers
 }
 
 export interface Variable {
-  id: string;
-  name: string;           // Display name (e.g., "Customer Name")
-  path: string;           // Go template path (e.g., ".CustomerName")
-  type: 'string' | 'number' | 'date' | 'array';
-  description?: string;
-  example?: string;       // Example value for preview
+    id: string;
+    name: string;           // Display name (e.g., "Customer Name")
+    path: string;           // Go template path (e.g., ".CustomerName")
+    type: 'string' | 'number' | 'date' | 'array';
+    description?: string;
 }
 
 export interface GridConfig {
-  columns: number;  // Number of columns (default: 12)
-  gap: number;      // Gap between columns in pixels (default: 16)
+    columns: number;  // Number of columns (default: 12)
+    gap: number;      // Gap between columns in pixels (default: 16)
 }
 
 export interface TemplateState {
-  grid: GridConfig;
-  components: ComponentInstance[];
-  variables: Variable[];
-  selectedComponentId: string | null;
-  isDragging: boolean;
+    grid: GridConfig;
+    components: ComponentInstance[];
+    variables: Variable[];
+    selectedComponentId: string | null;
+    isDragging: boolean;
 }
 
 // Drop zone types
 export type DropZoneType =
-  | 'canvas-empty'           // Empty canvas
-  | 'canvas-new-row'         // New row below existing
-  | 'container-interior'     // Inside container
-  | 'component-above'        // Above existing (blue line)
-  | 'component-below'        // Below existing (blue line)
-  | 'component-left'         // Left of component (purple - auto-wrap)
-  | 'component-right'        // Right of component (purple - auto-wrap)
-  | 'grid-cell'              // Specific cell in grid container
-  | 'grid-overflow';         // Grid is full, add new column
+    | 'canvas-empty'           // Empty canvas
+    | 'canvas-new-row'         // New row below existing
+    | 'container-interior'     // Inside container
+    | 'component-above'        // Above existing (blue line)
+    | 'component-below'        // Below existing (blue line)
+    | 'component-left'         // Left of component (purple - auto-wrap)
+    | 'component-right'        // Right of component (purple - auto-wrap)
+    | 'grid-cell'              // Specific cell in grid container
+    | 'grid-overflow';         // Grid is full, add new column
 
 // Type guards
 export function isContainer(component: ComponentInstance): boolean {
-  return component.type === 'grid-container' || component.type === 'stack-container';
+    return component.type === 'grid-container' || component.type === 'stack-container';
 }
 
 export function hasAbsolutePosition(pos: Position): pos is AbsolutePosition {
-  return pos.type === 'absolute';
+    return pos.type === 'absolute';
 }
 
 export function hasRelativePosition(pos: Position): pos is RelativePosition {
-  return pos.type === 'relative';
+    return pos.type === 'relative';
 }
 
 export function hasGridPosition(pos: Position): pos is GridPosition {
-  return pos.type === 'grid';
+    return pos.type === 'grid';
 }

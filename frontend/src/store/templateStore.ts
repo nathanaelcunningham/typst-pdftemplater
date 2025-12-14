@@ -53,33 +53,7 @@ export const useTemplateStore = create<TemplateStore>()(
             gap: 16,
         },
         components: [],
-        variables: [
-            // Predefined common variables
-            {
-                id: 'var-1',
-                name: 'Customer Name',
-                path: '.CustomerName',
-                type: 'string',
-                description: 'Name of the customer',
-                example: 'John Doe',
-            },
-            {
-                id: 'var-2',
-                name: 'Order Number',
-                path: '.OrderNumber',
-                type: 'string',
-                description: 'Order identification number',
-                example: 'ORD-12345',
-            },
-            {
-                id: 'var-3',
-                name: 'Date',
-                path: '.Date',
-                type: 'date',
-                description: 'Current date',
-                example: '2025-12-12',
-            },
-        ],
+        variables: [],
         selectedComponentId: null,
         isDragging: false,
 

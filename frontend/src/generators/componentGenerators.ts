@@ -17,7 +17,7 @@ export function generateTextComponent(component: ComponentInstance): string {
         params.push(`fill: rgb("${props.color}")`);
     }
 
-    const content = props.content.trimEnd().replaceAll("\n", "\\\n")
+    const content = props.content.trimEnd().replaceAll("\n", "\\\n").replaceAll("#", "\\#")
     // Build the text directive
     let code = `#text(${params.join(', ')})[${content || ''}]`;
 
