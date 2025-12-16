@@ -20,13 +20,7 @@ export function PreviewPanel() {
             setPreviewError(null);
 
             // Generate Typst code
-            const typstCode = generateTypst({
-                components,
-                variables,
-                grid,
-                selectedComponentId: null,
-                isDragging: false,
-            });
+            const typstCode = generateTypst({ components, grid });
 
             // Compile to PDF
             const pdfUrl = await compileToPDF(typstCode, preview.variableValues, variables);
@@ -42,7 +36,7 @@ export function PreviewPanel() {
     return (
         <div className="flex flex-col h-full bg-gray-900">
             {/* Preview Controls */}
-            <div className="flex-shrink-0 bg-white border-b border-gray-200 p-4">
+            <div className="shrink-0 bg-white border-b border-gray-200 p-4">
                 <button
                     onClick={handleCompile}
                     disabled={preview.isLoading}

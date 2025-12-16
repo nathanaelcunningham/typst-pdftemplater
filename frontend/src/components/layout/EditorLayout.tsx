@@ -36,7 +36,7 @@ export function EditorLayout() {
 
     // Generate Typst code (memoized for performance)
     const typstCode = useMemo(() => {
-        return generateTypst({ components, variables, grid, selectedComponentId: null, isDragging: false });
+        return generateTypst({ components, grid });
     }, [components, variables, grid]);
 
     const handleCopy = () => {

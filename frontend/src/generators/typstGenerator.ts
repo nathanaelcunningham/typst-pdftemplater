@@ -1,8 +1,8 @@
-import type { TemplateState } from '../types/template';
+import type { ComponentInstance, GridConfig } from '../types/template';
 import { hasAbsolutePosition } from '../types/template';
 import { componentGenerators } from './componentGenerators';
 
-export function generateTypst(state: TemplateState): string {
+export function generateTypst(state: { components: ComponentInstance[]; grid: GridConfig }): string {
     if (state.components.length === 0) {
         return '// No components added yet\n// Drag components from the palette to start building your template';
     }
