@@ -22,11 +22,11 @@ export function StackContainerProperties({ component }: StackContainerProperties
     return (
         <div className="space-y-4">
             {/* Header with unwrap button */}
-            <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-700">Stack Container</h3>
+            <div className="flex items-center justify-between p-3 bg-amber/10 border-2 border-amber/30 rounded-lg">
+                <h3 className="text-sm font-serif font-semibold text-charcoal">Stack Container</h3>
                 <button
                     onClick={handleUnwrap}
-                    className="px-2 py-1 text-xs font-medium text-red-600 bg-red-50 rounded hover:bg-red-100"
+                    className="px-3 py-1.5 text-xs font-medium text-danger bg-danger/10 border border-danger/30 rounded hover:bg-danger/20 active:scale-95 transition-all"
                 >
                     Unwrap
                 </button>
@@ -34,11 +34,11 @@ export function StackContainerProperties({ component }: StackContainerProperties
 
             {/* Direction */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Direction</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Direction</label>
                 <select
                     value={props.direction}
                     onChange={(e) => handleChange({ direction: e.target.value as 'vertical' | 'horizontal' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                 >
                     <option value="vertical">Vertical (Top to Bottom)</option>
                     <option value="horizontal">Horizontal (Left to Right)</option>
@@ -47,23 +47,23 @@ export function StackContainerProperties({ component }: StackContainerProperties
 
             {/* Spacing */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Spacing (pt)</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Spacing (pt)</label>
                 <input
                     type="number"
                     value={props.spacing}
                     onChange={(e) => handleChange({ spacing: Number(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                     min="0"
                 />
             </div>
 
             {/* Alignment */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Alignment</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Alignment</label>
                 <select
                     value={props.alignment || 'left'}
                     onChange={(e) => handleChange({ alignment: e.target.value as 'left' | 'center' | 'right' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                 >
                     <option value="left">Left</option>
                     <option value="center">Center</option>
@@ -71,7 +71,7 @@ export function StackContainerProperties({ component }: StackContainerProperties
                 </select>
             </div>
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-lighter">
                 This container stacks its children {props.direction === 'vertical' ? 'vertically' : 'horizontally'} with the specified spacing.
             </p>
         </div>

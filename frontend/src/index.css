@@ -1,1 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  /* Editorial-Technical Color System */
+  --color-charcoal: #1a1d29;
+  --color-slate: #2d3142;
+  --color-slate-light: #4f5464;
+  --color-slate-lighter: #6b6d7d;
+  --color-amber: #d4a574;
+  --color-amber-dark: #b8884e;
+  --color-amber-light: #e6c9a8;
+  --color-cream: #f8f6f1;
+  --color-cream-dark: #ede9e0;
+  --color-paper: #fdfcfa;
+  --color-ink: #2b2d3a;
+  --color-accent: #c97850;
+  --color-success: #7a9b76;
+  --color-danger: #c85a54;
+
+  /* Font Families */
+  --font-family-serif: 'Crimson Pro', Georgia, serif;
+  --font-family-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-family-sans: 'Work Sans', -apple-system, sans-serif;
+}

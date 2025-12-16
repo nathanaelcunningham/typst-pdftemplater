@@ -355,23 +355,27 @@ export function EditorLayout() {
 
     return (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div className="flex flex-col h-screen bg-gray-100">
-                {/* Top Bar */}
-                <div className="h-14 bg-white border-b border-gray-200 flex items-center px-4 shadow-sm">
-                    <h1 className="text-xl font-semibold text-gray-800">PDF Template Builder</h1>
-                    <div className="ml-auto flex items-center gap-2">
+            <div className="flex flex-col h-screen bg-cream font-sans">
+                {/* Top Bar - Editorial Header */}
+                <div className="h-16 bg-charcoal border-b-2 border-amber flex items-center px-8 shadow-lg">
+                    <h1 className="text-2xl font-serif font-semibold text-cream tracking-tight">
+                        PDF Template Builder
+                    </h1>
+                    <div className="ml-auto flex items-center gap-3">
                         {saveMessage && (
-                            <span className="text-sm text-green-600 font-medium">{saveMessage}</span>
+                            <span className="text-sm text-success font-medium animate-in fade-in duration-200">
+                                {saveMessage}
+                            </span>
                         )}
                         <button
                             onClick={handleSave}
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                            className="px-5 py-2.5 text-sm font-medium text-charcoal bg-amber rounded-md hover:bg-amber-dark active:scale-95 transition-all shadow-md hover:shadow-lg"
                         >
                             Save
                         </button>
                         <button
                             onClick={() => setShowVariables(true)}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                            className="px-5 py-2.5 text-sm font-medium text-cream bg-slate border border-slate-light rounded-md hover:bg-slate-light active:scale-95 transition-all"
                         >
                             Variables
                         </button>
@@ -384,37 +388,37 @@ export function EditorLayout() {
                 {/* Main Content Area */}
                 <div className="flex flex-1 overflow-hidden">
                     {/* Left Sidebar - Component Palette */}
-                    <div className="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
+                    <div className="w-72 bg-paper border-r-2 border-cream-dark flex flex-col shadow-sm">
                         <ComponentPalette />
                     </div>
 
                     {/* Center - Tabbed Interface */}
-                    <div className="flex-1 flex flex-col overflow-hidden bg-white">
-                        {/* Tab Bar */}
-                        <div className="flex items-center border-b border-gray-200 bg-white">
+                    <div className="flex-1 flex flex-col overflow-hidden bg-paper">
+                        {/* Tab Bar - Refined Editorial Style */}
+                        <div className="flex items-center border-b-2 border-cream-dark bg-paper">
                             <button
                                 onClick={() => setActiveTab('editor')}
-                                className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'editor'
-                                    ? 'text-blue-600 border-blue-600'
-                                    : 'text-gray-600 border-transparent hover:text-gray-900'
+                                className={`px-6 py-3.5 text-sm font-medium transition-all border-b-2 ${activeTab === 'editor'
+                                    ? 'text-amber-dark border-amber bg-cream/30'
+                                    : 'text-slate-lighter border-transparent hover:text-ink hover:bg-cream/50'
                                     }`}
                             >
                                 Editor
                             </button>
                             <button
                                 onClick={() => setActiveTab('code')}
-                                className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'code'
-                                    ? 'text-blue-600 border-blue-600'
-                                    : 'text-gray-600 border-transparent hover:text-gray-900'
+                                className={`px-6 py-3.5 text-sm font-mono font-medium transition-all border-b-2 ${activeTab === 'code'
+                                    ? 'text-amber-dark border-amber bg-cream/30'
+                                    : 'text-slate-lighter border-transparent hover:text-ink hover:bg-cream/50'
                                     }`}
                             >
                                 Typst Code
                             </button>
                             <button
                                 onClick={() => setActiveTab('preview')}
-                                className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'preview'
-                                    ? 'text-blue-600 border-blue-600'
-                                    : 'text-gray-600 border-transparent hover:text-gray-900'
+                                className={`px-6 py-3.5 text-sm font-medium transition-all border-b-2 ${activeTab === 'preview'
+                                    ? 'text-amber-dark border-amber bg-cream/30'
+                                    : 'text-slate-lighter border-transparent hover:text-ink hover:bg-cream/50'
                                     }`}
                             >
                                 Preview
@@ -424,9 +428,9 @@ export function EditorLayout() {
                             {activeTab === 'code' && (
                                 <button
                                     onClick={handleCopy}
-                                    className="ml-auto mr-3 px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200"
+                                    className="ml-auto mr-4 px-4 py-2 text-xs font-medium text-ink bg-amber/20 rounded hover:bg-amber/30 border border-amber/30 hover:border-amber active:scale-95 transition-all"
                                 >
-                                    Copy
+                                    Copy Code
                                 </button>
                             )}
                         </div>
@@ -434,12 +438,12 @@ export function EditorLayout() {
                         {/* Tab Content */}
                         <div className="flex-1 overflow-hidden">
                             {activeTab === 'editor' ? (
-                                <div className="h-full overflow-auto p-6 bg-gray-100">
+                                <div className="h-full overflow-auto p-8 bg-cream">
                                     <Canvas />
                                 </div>
                             ) : activeTab === 'code' ? (
-                                <div className="h-full overflow-auto p-4 bg-gray-50">
-                                    <pre className="text-xs font-mono text-gray-600 whitespace-pre-wrap">
+                                <div className="h-full overflow-auto p-6 bg-ink/5">
+                                    <pre className="text-xs font-mono text-slate-light whitespace-pre-wrap leading-relaxed p-4 bg-paper rounded-lg border border-cream-dark shadow-sm">
                                         {typstCode}
                                     </pre>
                                 </div>
@@ -450,7 +454,7 @@ export function EditorLayout() {
                     </div>
 
                     {/* Right Sidebar - Property Editor or Variable Values */}
-                    <div className="w-80 bg-white border-l border-gray-200 flex flex-col shadow-sm">
+                    <div className="w-80 bg-paper border-l-2 border-cream-dark flex flex-col shadow-sm">
                         {activeTab === 'preview' ? (
                             <VariableValuesPanel />
                         ) : (

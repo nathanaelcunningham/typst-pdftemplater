@@ -21,11 +21,11 @@ export function PaletteItem({ type, label, icon }: PaletteItemProps) {
             ref={setNodeRef}
             {...listeners}
             {...attributes}
-            className={`flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-grab hover:bg-gray-100 hover:border-gray-300 transition-colors ${isDragging ? 'opacity-50' : ''
+            className={`group flex items-center gap-3 p-3.5 bg-cream/50 border-2 border-cream-dark rounded-lg cursor-grab hover:bg-amber/10 hover:border-amber/40 hover:shadow-md active:scale-98 transition-all ${isDragging ? 'opacity-50 scale-95' : ''
                 }`}
         >
-            <span className="text-2xl">{icon}</span>
-            <span className="text-sm font-medium text-gray-700">{label}</span>
+            <span className="text-2xl group-hover:scale-110 transition-transform">{icon}</span>
+            <span className="text-sm font-medium text-ink group-hover:text-amber-dark transition-colors">{label}</span>
         </div>
     );
 }

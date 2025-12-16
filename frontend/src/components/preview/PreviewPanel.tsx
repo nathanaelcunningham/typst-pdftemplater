@@ -52,31 +52,32 @@ export function PreviewPanel() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-gray-900">
+        <div className="flex flex-col h-full bg-charcoal">
             {/* Preview Controls */}
-            <div className="shrink-0 bg-white border-b border-gray-200 p-4">
+            <div className="shrink-0 bg-paper border-b-2 border-cream-dark p-5">
                 <button
                     onClick={handleCompile}
                     disabled={preview.isLoading}
-                    className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                    className="w-full px-5 py-3 text-sm font-medium text-charcoal bg-amber rounded-md hover:bg-amber-dark disabled:bg-slate-light disabled:text-cream disabled:cursor-not-allowed active:scale-95 shadow-md hover:shadow-lg transition-all"
                 >
                     {preview.isLoading ? 'Compiling...' : 'Generate Preview'}
                 </button>
             </div>
 
             {/* PDF Viewer Section */}
-            <div className="flex-1 overflow-hidden bg-gray-900">
+            <div className="flex-1 overflow-hidden bg-charcoal">
                 {preview.isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <div className="text-center">
-                            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-                            <p className="text-white">Compiling PDF...</p>
+                            <div className="inline-block animate-spin rounded-full h-12 w-12 border-2 border-amber border-t-transparent mb-4"></div>
+                            <p className="text-cream font-medium">Compiling PDF...</p>
+                            <p className="text-slate-lighter text-sm mt-2">This may take a moment</p>
                         </div>
                     </div>
                 ) : preview.error ? (
-                    <div className="flex items-center justify-center h-full bg-red-50 p-8">
+                    <div className="flex items-center justify-center h-full bg-danger/5 p-8">
                         <div className="max-w-2xl w-full">
-                            <div className="text-red-600 text-center mb-4">
+                            <div className="text-danger text-center mb-4">
                                 <svg
                                     className="inline-block w-12 h-12 mb-2"
                                     fill="none"
@@ -90,9 +91,9 @@ export function PreviewPanel() {
                                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                     />
                                 </svg>
-                                <h3 className="text-lg font-semibold">Compilation Error</h3>
+                                <h3 className="text-lg font-serif font-semibold">Compilation Error</h3>
                             </div>
-                            <pre className="text-xs bg-white border border-red-200 rounded p-4 overflow-auto max-h-96 text-left">
+                            <pre className="text-xs font-mono bg-paper border-2 border-danger/30 rounded-lg p-4 overflow-auto max-h-96 text-left text-ink leading-relaxed">
                                 {preview.error}
                             </pre>
                         </div>
@@ -105,9 +106,9 @@ export function PreviewPanel() {
                     />
                 ) : (
                     <div className="flex items-center justify-center h-full">
-                        <div className="text-center text-gray-400">
+                        <div className="text-center text-slate-lighter">
                             <svg
-                                className="inline-block w-16 h-16 mb-4 opacity-50"
+                                className="inline-block w-16 h-16 mb-4 opacity-30"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -119,7 +120,8 @@ export function PreviewPanel() {
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                 />
                             </svg>
-                            <p className="text-sm">Fill in variables and click "Generate Preview" to compile PDF</p>
+                            <p className="text-sm font-medium mb-2">Ready to Preview</p>
+                            <p className="text-xs opacity-60 max-w-xs mx-auto">Fill in variables and click "Generate Preview" to compile PDF</p>
                         </div>
                     </div>
                 )}

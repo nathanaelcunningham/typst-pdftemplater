@@ -42,28 +42,28 @@ export function TextProperties({ component }: TextPropertiesProps) {
         <div className="space-y-4">
             {/* Content */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Content</label>
                 <textarea
                     ref={textareaRef}
                     value={props.content}
                     onChange={(e) => handleChange({ content: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                     rows={4}
                     placeholder="Enter text content..."
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-slate-lighter mt-1.5">
                     Use {`{{.VariableName}}`} for dynamic values
                 </p>
             </div>
 
             {/* Font Size */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Font Size (pt)</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Font Size (pt)</label>
                 <input
                     type="number"
                     value={props.fontSize}
                     onChange={(e) => handleChange({ fontSize: Number(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                     min="6"
                     max="72"
                 />
@@ -71,11 +71,11 @@ export function TextProperties({ component }: TextPropertiesProps) {
 
             {/* Font Weight */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Font Weight</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Font Weight</label>
                 <select
                     value={props.fontWeight}
                     onChange={(e) => handleChange({ fontWeight: e.target.value as 'normal' | 'bold' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                 >
                     <option value="normal">Normal</option>
                     <option value="bold">Bold</option>
@@ -84,11 +84,11 @@ export function TextProperties({ component }: TextPropertiesProps) {
 
             {/* Alignment */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Alignment</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Alignment</label>
                 <select
                     value={props.alignment}
                     onChange={(e) => handleChange({ alignment: e.target.value as 'left' | 'center' | 'right' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                 >
                     <option value="left">Left</option>
                     <option value="center">Center</option>
@@ -98,19 +98,19 @@ export function TextProperties({ component }: TextPropertiesProps) {
 
             {/* Color */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Color</label>
                 <div className="flex gap-2">
                     <input
                         type="color"
                         value={props.color}
                         onChange={(e) => handleChange({ color: e.target.value })}
-                        className="h-10 w-16 border border-gray-300 rounded cursor-pointer"
+                        className="h-10 w-16 border-2 border-cream-dark rounded cursor-pointer"
                     />
                     <input
                         type="text"
                         value={props.color}
                         onChange={(e) => handleChange({ color: e.target.value })}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink font-mono focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                         placeholder="#000000"
                     />
                 </div>

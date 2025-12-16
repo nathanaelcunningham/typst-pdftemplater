@@ -42,7 +42,7 @@ export function TableProperties({ component }: TablePropertiesProps) {
         <div className="space-y-4">
             {/* Number of Columns */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Columns</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Columns</label>
                 <input
                     type="number"
                     value={props.columns}
@@ -57,7 +57,7 @@ export function TableProperties({ component }: TablePropertiesProps) {
                             handleChange({ columns: newColumns, headers: newHeaders, rows: newRows });
                         }
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                     min="1"
                     max="10"
                 />
@@ -65,7 +65,7 @@ export function TableProperties({ component }: TablePropertiesProps) {
 
             {/* Headers */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Headers</label>
+                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Headers</label>
                 <div className="space-y-2">
                     {props.headers.map((header, index) => (
                         <input
@@ -73,7 +73,7 @@ export function TableProperties({ component }: TablePropertiesProps) {
                             type="text"
                             value={header}
                             onChange={(e) => handleHeaderChange(index, e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                             placeholder={`Header ${index + 1}`}
                         />
                     ))}
@@ -83,23 +83,23 @@ export function TableProperties({ component }: TablePropertiesProps) {
             {/* Rows */}
             <div>
                 <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700">Rows</label>
+                    <label className="text-xs font-medium text-slate-light uppercase tracking-wider">Rows</label>
                     <button
                         onClick={addRow}
-                        className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100"
+                        className="px-3 py-1.5 text-xs font-medium text-charcoal bg-amber/20 border border-amber/40 rounded hover:bg-amber/30 active:scale-95 transition-all"
                     >
                         + Add Row
                     </button>
                 </div>
                 <div className="space-y-3 max-h-64 overflow-y-auto">
                     {props.rows.map((row, rowIndex) => (
-                        <div key={rowIndex} className="border border-gray-200 rounded-md p-2 space-y-2">
+                        <div key={rowIndex} className="border-2 border-cream-dark bg-cream/30 rounded-md p-3 space-y-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-medium text-gray-500">Row {rowIndex + 1}</span>
+                                <span className="text-xs font-medium text-slate-light">Row {rowIndex + 1}</span>
                                 {props.rows.length > 1 && (
                                     <button
                                         onClick={() => removeRow(rowIndex)}
-                                        className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded"
+                                        className="px-2 py-1 text-xs text-danger hover:bg-danger/10 rounded active:scale-95 transition-all"
                                     >
                                         Remove
                                     </button>
@@ -111,7 +111,7 @@ export function TableProperties({ component }: TablePropertiesProps) {
                                     type="text"
                                     value={cell}
                                     onChange={(e) => handleRowChange(rowIndex, colIndex, e.target.value)}
-                                    className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-2 py-1.5 border-2 border-cream-dark rounded text-xs bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                                     placeholder={`${props.headers[colIndex] || `Col ${colIndex + 1}`}`}
                                 />
                             ))}
@@ -127,14 +127,14 @@ export function TableProperties({ component }: TablePropertiesProps) {
                     id="borders"
                     checked={props.borders}
                     onChange={(e) => handleChange({ borders: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 accent-amber border-2 border-cream-dark rounded focus:ring-2 focus:ring-amber/20"
                 />
-                <label htmlFor="borders" className="text-sm font-medium text-gray-700">
+                <label htmlFor="borders" className="text-sm font-medium text-ink">
                     Show Borders
                 </label>
             </div>
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-lighter">
                 Use {`{{.Variable}}`} in cells for dynamic data or {`{{range .Items}}`} for repeated rows
             </p>
         </div>

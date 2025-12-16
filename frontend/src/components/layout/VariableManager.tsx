@@ -88,28 +88,28 @@ export function VariableManager({ isOpen, onClose }: VariableManagerProps) {
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                className="fixed inset-0 bg-charcoal/70 backdrop-blur-sm z-40 animate-in fade-in duration-200"
                 onClick={onClose}
             />
 
             {/* Modal */}
             <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+                <div className="bg-paper rounded-lg shadow-2xl border-2 border-cream-dark max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col animate-in slide-in-from-bottom-4 duration-300">
                     {/* Header */}
-                    <div className="p-6 border-b border-gray-200">
+                    <div className="p-6 border-b-2 border-cream-dark bg-gradient-to-b from-cream/50 to-transparent">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-semibold text-gray-800">
+                            <h2 className="text-xl font-serif font-semibold text-charcoal">
                                 {isEditing ? (isCreating ? 'New Variable' : 'Edit Variable') : 'Available Variables'}
                             </h2>
                             <button
                                 onClick={onClose}
-                                className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                                className="text-slate-light hover:text-charcoal text-2xl leading-none w-8 h-8 flex items-center justify-center hover:bg-cream rounded transition-all"
                             >
                                 &times;
                             </button>
                         </div>
                         {!isEditing && (
-                            <p className="text-sm text-gray-600 mt-2">
+                            <p className="text-sm text-slate-lighter mt-2">
                                 Use these variables in your template by clicking "Insert Variable" in component properties
                             </p>
                         )}
@@ -120,42 +120,42 @@ export function VariableManager({ isOpen, onClose }: VariableManagerProps) {
                         {isEditing ? (
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Name <span className="text-red-500">*</span>
+                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">
+                                        Name <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         placeholder="e.g., Customer Name"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Path <span className="text-red-500">*</span>
+                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">
+                                        Path <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value={formData.path}
                                         onChange={(e) => setFormData({ ...formData, path: e.target.value })}
                                         placeholder="e.g., .CustomerName"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink font-mono focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                                     />
-                                    <p className="text-xs text-gray-500 mt-1">
+                                    <p className="text-xs text-slate-lighter mt-1.5">
                                         Go template path (e.g., .Field, .Nested.Field, .Array[0])
                                     </p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">
                                         Type
                                     </label>
                                     <select
                                         value={formData.type}
                                         onChange={(e) => setFormData({ ...formData, type: e.target.value as Variable['type'] })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                                     >
                                         <option value="string">String</option>
                                         <option value="number">Number</option>
@@ -165,7 +165,7 @@ export function VariableManager({ isOpen, onClose }: VariableManagerProps) {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">
                                         Description
                                     </label>
                                     <textarea
@@ -173,27 +173,27 @@ export function VariableManager({ isOpen, onClose }: VariableManagerProps) {
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         placeholder="Optional description"
                                         rows={3}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                                     />
                                 </div>
 
                                 <div className="flex gap-2 pt-4">
                                     <button
                                         onClick={handleSave}
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                        className="px-5 py-2.5 bg-amber text-charcoal font-medium rounded-md hover:bg-amber-dark active:scale-95 shadow-md hover:shadow-lg transition-all"
                                     >
                                         {isCreating ? 'Create' : 'Save'}
                                     </button>
                                     <button
                                         onClick={handleCancel}
-                                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                                        className="px-5 py-2.5 bg-cream-dark text-ink font-medium rounded-md hover:bg-slate/20 active:scale-95 transition-all"
                                     >
                                         Cancel
                                     </button>
                                     {!isCreating && (
                                         <button
                                             onClick={handleDelete}
-                                            className="ml-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                                            className="ml-auto px-5 py-2.5 bg-danger/10 text-danger border border-danger/30 font-medium rounded-md hover:bg-danger/20 hover:border-danger active:scale-95 transition-all"
                                         >
                                             Delete
                                         </button>
@@ -205,39 +205,40 @@ export function VariableManager({ isOpen, onClose }: VariableManagerProps) {
                                 <div className="mb-4">
                                     <button
                                         onClick={handleNew}
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                        className="px-5 py-2.5 bg-amber text-charcoal font-medium rounded-md hover:bg-amber-dark active:scale-95 shadow-md hover:shadow-lg transition-all"
                                     >
                                         + New Variable
                                     </button>
                                 </div>
 
                                 {variables.length === 0 ? (
-                                    <div className="text-center text-gray-400 py-12">
-                                        <p>No variables defined yet</p>
-                                        <p className="text-sm mt-2">Click "New Variable" to create one</p>
+                                    <div className="text-center py-16">
+                                        <div className="text-4xl mb-3 opacity-30">📋</div>
+                                        <p className="text-slate-lighter font-medium">No variables defined yet</p>
+                                        <p className="text-sm text-slate-lighter/60 mt-2">Click "New Variable" to create one</p>
                                     </div>
                                 ) : (
-                                    <div className="space-y-4">
+                                    <div className="space-y-3">
                                         {variables.map((variable) => (
                                             <div
                                                 key={variable.id}
-                                                className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors cursor-pointer"
+                                                className="p-4 border-2 border-cream-dark bg-cream/30 rounded-lg hover:border-amber/50 hover:bg-amber/5 hover:shadow-md transition-all cursor-pointer group"
                                                 onClick={() => handleEdit(variable)}
                                             >
                                                 <div className="flex items-start justify-between gap-4">
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-2 mb-1">
-                                                            <h3 className="font-semibold text-gray-800">{variable.name}</h3>
-                                                            <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded">
+                                                            <h3 className="font-serif font-semibold text-charcoal">{variable.name}</h3>
+                                                            <span className="px-2 py-0.5 text-xs font-medium bg-slate/10 text-slate-light border border-slate/20 rounded">
                                                                 {variable.type}
                                                             </span>
                                                         </div>
                                                         {variable.description && (
-                                                            <p className="text-sm text-gray-600 mb-2">{variable.description}</p>
+                                                            <p className="text-sm text-slate-lighter mb-2">{variable.description}</p>
                                                         )}
                                                     </div>
                                                     <div className="text-right">
-                                                        <code className="text-xs font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                                                        <code className="text-xs font-mono bg-amber/10 text-amber-dark border border-amber/30 px-2 py-1 rounded group-hover:bg-amber/20 transition-colors">
                                                             {`{{${variable.path}}}`}
                                                         </code>
                                                     </div>
@@ -252,9 +253,9 @@ export function VariableManager({ isOpen, onClose }: VariableManagerProps) {
 
                     {/* Footer */}
                     {!isEditing && (
-                        <div className="p-6 border-t border-gray-200 bg-gray-50">
-                            <p className="text-xs text-gray-600">
-                                <strong>Tip:</strong> Variables are processed by your Go backend template engine before generating the PDF
+                        <div className="p-6 border-t-2 border-cream-dark bg-gradient-to-t from-cream/30 to-transparent">
+                            <p className="text-xs text-slate-lighter">
+                                <strong className="font-semibold text-slate-light">Tip:</strong> Variables are processed by your Go backend template engine before generating the PDF
                             </p>
                         </div>
                     )}

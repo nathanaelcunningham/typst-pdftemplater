@@ -15,16 +15,17 @@ export function ComponentPalette() {
 
     return (
         <div className="flex flex-col h-full">
-            <div className="p-4 border-b border-gray-200">
-                <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+            <div className="p-6 border-b-2 border-cream-dark bg-gradient-to-b from-cream/50 to-transparent">
+                <h2 className="text-lg font-serif font-semibold text-charcoal tracking-tight">
                     Components
                 </h2>
+                <p className="text-xs text-slate-lighter mt-1">Drag to canvas to build</p>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
-                <div className="space-y-4">
+            <div className="flex-1 overflow-y-auto p-5">
+                <div className="space-y-6">
                     {/* Content Components */}
                     <div>
-                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                        <h3 className="text-xs font-semibold text-slate-light uppercase tracking-widest mb-3 px-1">
                             Content
                         </h3>
                         <div className="space-y-2">
@@ -41,7 +42,7 @@ export function ComponentPalette() {
 
                     {/* Layout Components */}
                     <div>
-                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                        <h3 className="text-xs font-semibold text-slate-light uppercase tracking-widest mb-3 px-1">
                             Layout
                         </h3>
                         <div className="space-y-2">

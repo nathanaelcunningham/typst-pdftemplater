@@ -25,38 +25,40 @@ export function VariableValuesPanel() {
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
-            <div className="p-4 border-b border-gray-200 bg-gray-50">
-                <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+            <div className="p-6 border-b-2 border-cream-dark bg-gradient-to-b from-cream/50 to-transparent">
+                <h2 className="text-lg font-serif font-semibold text-charcoal tracking-tight">
                     Variable Values
                 </h2>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-slate-lighter mt-1">
                     Enter values for preview
                 </p>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-5">
                 {variables.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-8">
-                        No variables defined. Add variables in Variable Manager.
-                    </p>
+                    <div className="text-center py-16">
+                        <div className="text-4xl mb-3 opacity-30">📋</div>
+                        <p className="text-sm text-slate-lighter font-medium">No variables defined</p>
+                        <p className="text-xs text-slate-lighter/60 mt-2">Add variables in Variable Manager</p>
+                    </div>
                 ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         {variables.map((variable) => {
                             const variableValue = preview.variableValues.find(
                                 (vv) => vv.variableId === variable.id
                             );
 
                             return (
-                                <div key={variable.id} className="space-y-1">
-                                    <label className="block text-sm font-medium text-gray-700">
+                                <div key={variable.id} className="space-y-2">
+                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider">
                                         {variable.name}
-                                        <span className="ml-2 px-1.5 py-0.5 text-xs bg-gray-200 text-gray-600 rounded">
+                                        <span className="ml-2 px-2 py-0.5 text-xs font-normal normal-case bg-slate/10 text-slate-light border border-slate/20 rounded">
                                             {variable.type}
                                         </span>
                                     </label>
 
                                     {variable.description && (
-                                        <p className="text-xs text-gray-500">{variable.description}</p>
+                                        <p className="text-xs text-slate-lighter">{variable.description}</p>
                                     )}
 
                                     <input
@@ -64,10 +66,10 @@ export function VariableValuesPanel() {
                                         value={variableValue?.value || ''}
                                         onChange={(e) => updateVariableValue(variable.id, e.target.value)}
                                         placeholder={`Enter ${variable.name}`}
-                                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2.5 text-sm border-2 border-cream-dark rounded-md bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                                     />
 
-                                    <p className="text-xs text-gray-400 font-mono">{`{{.${variable.path}}}`}</p>
+                                    <p className="text-xs text-slate-lighter/60 font-mono">{`{{${variable.path}}}`}</p>
                                 </div>
                             );
                         })}

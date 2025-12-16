@@ -33,8 +33,10 @@ export function PropertyPanel() {
 
   if (!selectedComponent) {
     return (
-      <div className="text-sm text-gray-400 text-center py-12">
-        <p>Select a component to edit its properties</p>
+      <div className="text-center py-16 px-4">
+        <div className="text-4xl mb-3 opacity-30">✨</div>
+        <p className="text-sm text-slate-lighter font-medium">Select a component</p>
+        <p className="text-xs text-slate-lighter/60 mt-1">to edit its properties</p>
       </div>
     );
   }
@@ -55,26 +57,28 @@ export function PropertyPanel() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Component type indicator */}
-      <div className="flex items-center justify-between">
-        <div className="text-sm font-semibold text-gray-700 capitalize">
-          {selectedComponent.type} Component
+      <div className="flex items-center justify-between p-4 bg-cream/50 border-2 border-cream-dark rounded-lg">
+        <div className="text-sm font-serif font-semibold text-charcoal capitalize">
+          {selectedComponent.type.replace('-', ' ')} Component
         </div>
         <button
           onClick={handleDelete}
-          className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded hover:bg-red-100"
+          className="px-3 py-1.5 text-xs font-medium text-danger bg-danger/10 border border-danger/30 rounded hover:bg-danger/20 hover:border-danger active:scale-95 transition-all"
         >
           Delete
         </button>
       </div>
 
       {/* Component-specific properties */}
-      {selectedComponent.type === 'text' && <TextProperties component={selectedComponent} />}
-      {selectedComponent.type === 'image' && <ImageProperties component={selectedComponent} />}
-      {selectedComponent.type === 'table' && <TableProperties component={selectedComponent} />}
-      {selectedComponent.type === 'grid-container' && <GridContainerProperties component={selectedComponent} />}
-      {selectedComponent.type === 'stack-container' && <StackContainerProperties component={selectedComponent} />}
+      <div className="space-y-4">
+        {selectedComponent.type === 'text' && <TextProperties component={selectedComponent} />}
+        {selectedComponent.type === 'image' && <ImageProperties component={selectedComponent} />}
+        {selectedComponent.type === 'table' && <TableProperties component={selectedComponent} />}
+        {selectedComponent.type === 'grid-container' && <GridContainerProperties component={selectedComponent} />}
+        {selectedComponent.type === 'stack-container' && <StackContainerProperties component={selectedComponent} />}
+      </div>
     </div>
   );
 }
