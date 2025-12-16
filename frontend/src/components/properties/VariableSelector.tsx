@@ -42,7 +42,7 @@ export function VariableSelector({ onSelect }: VariableSelectorProps) {
                 {variables.map((variable) => (
                   <button
                     key={variable.id}
-                    onClick={() => handleSelect(`{{${variable.path}}}`)}
+                    onClick={() => handleSelect(`{{.${variable.path}}}`)}
                     className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -56,7 +56,7 @@ export function VariableSelector({ onSelect }: VariableSelectorProps) {
                           </div>
                         )}
                         <div className="text-xs font-mono text-blue-600 mt-1">
-                          {`{{${variable.path}}}`}
+                          {`{{.${variable.path}}}`}
                         </div>
                       </div>
                       {variable.example && (

@@ -2,21 +2,35 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"pdfgen/internal/templates"
 
 	"github.com/Dadido3/go-typst"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 )
 
 func main() {
 	r := chi.NewRouter()
 
-	r.Get("/generate/{template}", GenerateTemplate)
-	r.Get("/generatebytes", GenerateTemplateBytes)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"https://*", "http://*", "http://localhost:5173"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{
+			"Accept",
+			"Authorization",
+			"Content-Type",
+			"X-CSRF-Token",
+			"x-api-key",
+		},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
+
+	r.Post("/compile-preview", CompilePreview)
 
 	log.Println("Starting server on :1234")
 	if err := http.ListenAndServe(":1234", r); err != nil {
@@ -24,58 +38,29 @@ func main() {
 	}
 }
 
-type Invoice struct {
-	Products      []Product
-	ProductTotal  string
-	DiscountTotal string
-	Install       string
-	Shipping      string
-	Tax           string
-	Total         string
-	Name          string
-	OrderNumber   string
+type CompilePreviewRequest struct {
+	TypstCode string            `json:"typstCode"`
+	Variables map[string]string `json:"variables"`
 }
 
-type Product struct {
-	Name      string
-	ProductID string
-	Price     string
-	Quantity  string
-	Discount  string
-	Total     string
-}
+func CompilePreview(w http.ResponseWriter, r *http.Request) {
+	var req CompilePreviewRequest
 
-func GenerateTemplate(w http.ResponseWriter, r *http.Request) {
-	products := []Product{}
-
-	for i := range 30 {
-		products = append(products, Product{
-			Name:      "Cable Wire Spool - 500ft",
-			ProductID: fmt.Sprintf("VR-CWS-500-%d", i),
-			Price:     "425.00",
-			Quantity:  "1",
-			Discount:  "42.50",
-			Total:     "382.50",
-		})
-	}
-	invoice := Invoice{
-		Products:      products,
-		ProductTotal:  "9,364.00",
-		DiscountTotal: "242.90",
-		Install:       "1,500.00",
-		Shipping:      "350.00",
-		Tax:           "785.42",
-		Total:         "11,756.52",
-		Name:          "Test Invoice",
-		OrderNumber:   "196690-01",
-	}
-	tmpl, err := template.ParseFS(templates.Pdfs, "pdf/invoice.typ")
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		http.Error(w, err.Error(), 400)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	fmt.Printf("%#v\n", req.Variables)
+
+	tmpl, err := template.New("compile-preview").Parse(req.TypstCode)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	var t bytes.Buffer
-	err = tmpl.Execute(&t, invoice)
+	err = tmpl.Execute(&t, req.Variables)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -84,43 +69,6 @@ func GenerateTemplate(w http.ResponseWriter, r *http.Request) {
 	typstCaller := typst.CLI{}
 
 	err = typstCaller.Compile(&t, w, nil)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-
-}
-
-func GenerateTemplateBytes(w http.ResponseWriter, r *http.Request) {
-	products := []Product{}
-
-	for i := range 6 {
-		products = append(products, Product{
-			Name:      "Cable Wire Spool - 500ft",
-			ProductID: fmt.Sprintf("VR-CWS-500-%d", i),
-			Price:     "425.00",
-			Quantity:  "1",
-			Discount:  "42.50",
-			Total:     "382.50",
-		})
-	}
-	invoice := Invoice{
-		Products:      products,
-		ProductTotal:  "9,364.00",
-		DiscountTotal: "242.90",
-		Install:       "1,500.00",
-		Shipping:      "350.00",
-		Tax:           "785.42",
-		Total:         "11,756.52",
-		Name:          "Test Invoice",
-		OrderNumber:   "196690-01",
-	}
-	tmpl, err := template.ParseFS(templates.Pdfs, "pdf/invoice.typ")
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		return
-	}
-	err = tmpl.Execute(w, invoice)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

@@ -1,18 +1,23 @@
 import { DndContext, type DragEndEvent, type DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ComponentPalette } from './ComponentPalette';
 import { Canvas } from './Canvas';
 import { PropertyEditor } from './PropertyEditor';
-import { CodePreview } from './CodePreview';
 import { VariableManager } from './VariableManager';
+import { PreviewPanel } from '../preview/PreviewPanel';
+import { VariableValuesPanel } from '../preview/VariableValuesPanel';
 import { useTemplateStore } from '../../store/templateStore';
+import { generateTypst } from '../../generators/typstGenerator';
 import type { ComponentType } from '../../types/template';
 import { hasAbsolutePosition } from '../../types/template';
 import { defaultTextProps, defaultImageProps, defaultTableProps, defaultGridContainerProps, defaultStackContainerProps } from '../../types/components';
 
+type CenterTab = 'editor' | 'code' | 'preview';
+
 export function EditorLayout() {
     const [showVariables, setShowVariables] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
+    const [activeTab, setActiveTab] = useState<CenterTab>('editor');
     const {
         addComponent,
         setDragging,
@@ -20,11 +25,30 @@ export function EditorLayout() {
         removeComponent,
         selectComponent,
         components,
+        variables,
+        grid,
         addToContainer,
         addGridColumn,
         saveToLocalStorage,
         loadFromLocalStorage,
+        clearPreview,
     } = useTemplateStore();
+
+    // Generate Typst code (memoized for performance)
+    const typstCode = useMemo(() => {
+        return generateTypst({ components, variables, grid, selectedComponentId: null, isDragging: false });
+    }, [components, variables, grid]);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(typstCode);
+    };
+
+    // Cleanup preview on unmount
+    useEffect(() => {
+        return () => {
+            clearPreview();
+        };
+    }, [clearPreview]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -364,21 +388,74 @@ export function EditorLayout() {
                         <ComponentPalette />
                     </div>
 
-                    {/* Center - Canvas */}
-                    <div className="flex-1 flex flex-col overflow-hidden">
-                        <div className="flex-1 overflow-auto p-6">
-                            <Canvas />
+                    {/* Center - Tabbed Interface */}
+                    <div className="flex-1 flex flex-col overflow-hidden bg-white">
+                        {/* Tab Bar */}
+                        <div className="flex items-center border-b border-gray-200 bg-white">
+                            <button
+                                onClick={() => setActiveTab('editor')}
+                                className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'editor'
+                                    ? 'text-blue-600 border-blue-600'
+                                    : 'text-gray-600 border-transparent hover:text-gray-900'
+                                    }`}
+                            >
+                                Editor
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('code')}
+                                className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'code'
+                                    ? 'text-blue-600 border-blue-600'
+                                    : 'text-gray-600 border-transparent hover:text-gray-900'
+                                    }`}
+                            >
+                                Typst Code
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('preview')}
+                                className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'preview'
+                                    ? 'text-blue-600 border-blue-600'
+                                    : 'text-gray-600 border-transparent hover:text-gray-900'
+                                    }`}
+                            >
+                                Preview
+                            </button>
+
+                            {/* Copy button - only show in Code tab */}
+                            {activeTab === 'code' && (
+                                <button
+                                    onClick={handleCopy}
+                                    className="ml-auto mr-3 px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200"
+                                >
+                                    Copy
+                                </button>
+                            )}
                         </div>
 
-                        {/* Bottom Panel - Code Preview */}
-                        <div className="h-56 bg-white border-t border-gray-200 shadow-lg">
-                            <CodePreview />
+                        {/* Tab Content */}
+                        <div className="flex-1 overflow-hidden">
+                            {activeTab === 'editor' ? (
+                                <div className="h-full overflow-auto p-6 bg-gray-100">
+                                    <Canvas />
+                                </div>
+                            ) : activeTab === 'code' ? (
+                                <div className="h-full overflow-auto p-4 bg-gray-50">
+                                    <pre className="text-xs font-mono text-gray-600 whitespace-pre-wrap">
+                                        {typstCode}
+                                    </pre>
+                                </div>
+                            ) : (
+                                <PreviewPanel />
+                            )}
                         </div>
                     </div>
 
-                    {/* Right Sidebar - Property Editor */}
+                    {/* Right Sidebar - Property Editor or Variable Values */}
                     <div className="w-80 bg-white border-l border-gray-200 flex flex-col shadow-sm">
-                        <PropertyEditor />
+                        {activeTab === 'preview' ? (
+                            <VariableValuesPanel />
+                        ) : (
+                            <PropertyEditor />
+                        )}
                     </div>
                 </div>
             </div>

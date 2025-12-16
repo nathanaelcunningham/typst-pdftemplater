@@ -40,6 +40,14 @@ interface TemplateStore extends TemplateState {
     updateVariable: (id: string, updates: Partial<Variable>) => void;
     removeVariable: (id: string) => void;
 
+    // Preview actions
+    setPreviewLoading: (loading: boolean) => void;
+    setPreviewPdf: (pdfUrl: string | null) => void;
+    setPreviewError: (error: string | null) => void;
+    updateVariableValue: (variableId: string, value: string) => void;
+    initializeVariableValues: () => void;
+    clearPreview: () => void;
+
     // Grid actions
     setGridColumns: (columns: number) => void;
     setGridGap: (gap: number) => void;
@@ -60,6 +68,12 @@ export const useTemplateStore = create<TemplateStore>()(
         variables: [],
         selectedComponentId: null,
         isDragging: false,
+        preview: {
+            isLoading: false,
+            pdfUrl: null,
+            error: null,
+            variableValues: [],
+        },
 
         // Component actions
         addComponent: (component) =>
@@ -130,6 +144,67 @@ export const useTemplateStore = create<TemplateStore>()(
         removeVariable: (id) =>
             set((state) => {
                 state.variables = state.variables.filter((v) => v.id !== id);
+            }),
+
+        // Preview actions
+        setPreviewLoading: (loading) =>
+            set((state) => {
+                state.preview.isLoading = loading;
+            }),
+
+        setPreviewPdf: (pdfUrl) =>
+            set((state) => {
+                state.preview.pdfUrl = pdfUrl;
+                state.preview.error = null;
+            }),
+
+        setPreviewError: (error) =>
+            set((state) => {
+                state.preview.error = error;
+                state.preview.pdfUrl = null;
+            }),
+
+        updateVariableValue: (variableId, value) =>
+            set((state) => {
+                const existing = state.preview.variableValues.find(v => v.variableId === variableId);
+                if (existing) {
+                    existing.value = value;
+                } else {
+                    state.preview.variableValues.push({ variableId, value });
+                }
+            }),
+
+        initializeVariableValues: () =>
+            set((state) => {
+                // Create entries for all variables in VariableManager
+                const existingIds = new Set(state.preview.variableValues.map(v => v.variableId));
+
+                // Add new variables
+                state.variables.forEach(variable => {
+                    if (!existingIds.has(variable.id)) {
+                        state.preview.variableValues.push({
+                            variableId: variable.id,
+                            value: '',
+                        });
+                    }
+                });
+
+                // Remove variables that no longer exist
+                const currentVariableIds = new Set(state.variables.map(v => v.id));
+                state.preview.variableValues = state.preview.variableValues.filter(
+                    vv => currentVariableIds.has(vv.variableId)
+                );
+            }),
+
+        clearPreview: () =>
+            set((state) => {
+                // Revoke blob URL to free memory
+                if (state.preview.pdfUrl) {
+                    URL.revokeObjectURL(state.preview.pdfUrl);
+                }
+                state.preview.pdfUrl = null;
+                state.preview.error = null;
+                state.preview.isLoading = false;
             }),
 
         // Grid actions

@@ -34,9 +34,21 @@ export interface ComponentInstance {
 export interface Variable {
     id: string;
     name: string;           // Display name (e.g., "Customer Name")
-    path: string;           // Go template path (e.g., ".CustomerName")
+    path: string;           // Variable path (e.g., "CustomerName") - dot prefix added during Typst generation
     type: 'string' | 'number' | 'date' | 'array';
     description?: string;
+}
+
+export interface VariableValue {
+    variableId: string;     // ID of variable in VariableManager
+    value: string;          // User input value
+}
+
+export interface PreviewState {
+    isLoading: boolean;
+    pdfUrl: string | null;  // Blob URL for compiled PDF
+    error: string | null;   // Compilation error message
+    variableValues: VariableValue[];
 }
 
 export interface GridConfig {
@@ -50,6 +62,7 @@ export interface TemplateState {
     variables: Variable[];
     selectedComponentId: string | null;
     isDragging: boolean;
+    preview: PreviewState;
 }
 
 // Drop zone types
