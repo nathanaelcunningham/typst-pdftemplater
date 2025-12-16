@@ -37,7 +37,7 @@ export async function compileToPDF(
     };
 
     // POST to backend
-    const response = await fetch('http://app.pdfgen.orb.local:1234/compile-preview', {
+    const response = await fetch('http://app.pdfgen.orb.local:1234/api/templates/preview', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

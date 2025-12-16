@@ -3,12 +3,12 @@ package models
 import "time"
 
 type Template struct {
-	id          string
-	name        string
-	description string
-	content     TemplateContent
-	created_at  time.Time
-	updated_at  time.Time
+	ID          string
+	Name        string
+	Description string
+	Content     TemplateContent
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type TemplateContent struct {

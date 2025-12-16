@@ -1,77 +1,53 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
-	"html/template"
 	"log"
-	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/Dadido3/go-typst"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/cors"
+	"pdfgen/internal/persistance/sqlite"
+	"pdfgen/internal/server"
+	"pdfgen/internal/templates"
 )
 
 func main() {
-	r := chi.NewRouter()
-
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"http://localhost:3000"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{
-			"Accept",
-			"Authorization",
-			"Content-Type",
-			"X-CSRF-Token",
-			"x-api-key",
-		},
-		AllowCredentials: true,
-		MaxAge:           300,
-	}))
-
-	r.Post("/compile-preview", CompilePreview)
-
-	log.Println("Starting server on :1234")
-	if err := http.ListenAndServe(":1234", r); err != nil {
-		panic(err)
+	if err := run(); err != nil {
+		log.Fatal(err)
 	}
 }
 
-type CompilePreviewRequest struct {
-	TypstCode string            `json:"typstCode"`
-	Variables map[string]string `json:"variables"`
-}
-
-func CompilePreview(w http.ResponseWriter, r *http.Request) {
-	var req CompilePreviewRequest
-
-	err := json.NewDecoder(r.Body).Decode(&req)
+func run() error {
+	db, err := sqlite.NewDB("./db")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return fmt.Errorf("failed to initialize database: %w", err)
 	}
-	fmt.Printf("%#v\n", req.Variables)
+	defer db.Close()
 
-	tmpl, err := template.New("compile-preview").Parse(req.TypstCode)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	templateRepo := sqlite.NewTemplateRepository(db)
+	templateService := templates.NewService(templateRepo)
 
-	var t bytes.Buffer
-	err = tmpl.Execute(&t, req.Variables)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
+	srv := server.New(server.Config{
+		Port:            "1234",
+		AllowedOrigins:  []string{"http://localhost:3000"},
+		TemplateService: templateService,
+	})
 
-	typstCaller := typst.CLI{}
+	go func() {
+		if err := srv.Start(); err != nil {
+			log.Printf("Server error: %v", err)
+		}
+	}()
 
-	err = typstCaller.Compile(&t, w, nil)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	return srv.Shutdown(ctx)
 }
