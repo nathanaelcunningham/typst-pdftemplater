@@ -1,6 +1,6 @@
 import { useTemplateStore } from '../../store/templateStore';
 import { generateTypst } from '../../generators/typstGenerator';
-import { compileToPDF } from '../../api/pdfCompiler';
+import { previewTemplate, HTTPError } from '../../api';
 
 export function PreviewPanel() {
     const components = useTemplateStore((state) => state.components);
@@ -22,12 +22,30 @@ export function PreviewPanel() {
             // Generate Typst code
             const typstCode = generateTypst({ components, grid });
 
-            // Compile to PDF
-            const pdfUrl = await compileToPDF(typstCode, preview.variableValues, variables);
+            // Build variables map from variable values
+            const variablesMap: Record<string, string> = {};
+            preview.variableValues.forEach(vv => {
+                const variable = variables.find(v => v.id === vv.variableId);
+                if (variable) {
+                    variablesMap[variable.path] = vv.value;
+                }
+            });
 
+            // Compile to PDF via API
+            const blob = await previewTemplate({
+                typstCode,
+                variables: variablesMap,
+            });
+
+            // Create blob URL for iframe
+            const pdfUrl = URL.createObjectURL(blob);
             setPreviewPdf(pdfUrl);
         } catch (error) {
-            setPreviewError(error instanceof Error ? error.message : 'Unknown error');
+            if (error instanceof HTTPError) {
+                setPreviewError(`Compilation failed: ${error.message}`);
+            } else {
+                setPreviewError(error instanceof Error ? error.message : 'Unknown error');
+            }
         } finally {
             setPreviewLoading(false);
         }
