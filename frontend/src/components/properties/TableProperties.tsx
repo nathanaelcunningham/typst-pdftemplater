@@ -1,6 +1,7 @@
 import type { ComponentInstance } from '../../types/template';
 import type { TableComponentProps } from '../../types/components';
 import { useTemplateStore } from '../../store/templateStore';
+import { NumberInput, Button } from '../ui';
 
 interface TablePropertiesProps {
     component: ComponentInstance;
@@ -41,27 +42,22 @@ export function TableProperties({ component }: TablePropertiesProps) {
     return (
         <div className="space-y-4">
             {/* Number of Columns */}
-            <div>
-                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Columns</label>
-                <input
-                    type="number"
-                    value={props.columns}
-                    onChange={(e) => {
-                        const newColumns = Number(e.target.value);
-                        if (newColumns > 0) {
-                            // Adjust headers and rows to match new column count
-                            const newHeaders = Array(newColumns).fill('').map((_, i) => props.headers[i] || `Column ${i + 1}`);
-                            const newRows = props.rows.map(row =>
-                                Array(newColumns).fill('').map((_, i) => row[i] || '')
-                            );
-                            handleChange({ columns: newColumns, headers: newHeaders, rows: newRows });
-                        }
-                    }}
-                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                    min="1"
-                    max="10"
-                />
-            </div>
+            <NumberInput
+                label="Columns"
+                value={props.columns}
+                onChange={(newColumns) => {
+                    if (newColumns > 0) {
+                        // Adjust headers and rows to match new column count
+                        const newHeaders = Array(newColumns).fill('').map((_, i) => props.headers[i] || `Column ${i + 1}`);
+                        const newRows = props.rows.map(row =>
+                            Array(newColumns).fill('').map((_, i) => row[i] || '')
+                        );
+                        handleChange({ columns: newColumns, headers: newHeaders, rows: newRows });
+                    }
+                }}
+                min={1}
+                max={10}
+            />
 
             {/* Headers */}
             <div>
@@ -84,12 +80,9 @@ export function TableProperties({ component }: TablePropertiesProps) {
             <div>
                 <div className="flex items-center justify-between mb-2">
                     <label className="text-xs font-medium text-slate-light uppercase tracking-wider">Rows</label>
-                    <button
-                        onClick={addRow}
-                        className="px-3 py-1.5 text-xs font-medium text-charcoal bg-amber/20 border border-amber/40 rounded hover:bg-amber/30 active:scale-95 transition-all"
-                    >
+                    <Button onClick={addRow} variant="primary" size="sm">
                         + Add Row
-                    </button>
+                    </Button>
                 </div>
                 <div className="space-y-3 max-h-64 overflow-y-auto">
                     {props.rows.map((row, rowIndex) => (

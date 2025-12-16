@@ -2,6 +2,7 @@ import { useTemplateStore } from '../../store/templateStore';
 import { hasAbsolutePosition } from '../../types/template';
 import { ComponentWrapper } from './ComponentWrapper';
 import { DropZone } from './DropZone';
+import { EmptyState } from '../ui';
 
 export function GridContainer() {
     const components = useTemplateStore((state) => state.components);
@@ -31,11 +32,12 @@ export function GridContainer() {
     if (topLevelComponents.length === 0) {
         return (
             <div className="h-full">
-                <div className="text-center py-12 text-gray-400">
-                    <div className="text-4xl mb-4">📄</div>
-                    <p className="text-lg font-medium mb-2">Start Building Your Template</p>
-                    <p className="text-sm">Drag components from the left sidebar to begin</p>
-                </div>
+                <EmptyState
+                    icon="📄"
+                    message="Start Building Your Template"
+                    helperText="Drag components from the left sidebar to begin"
+                    className="text-gray-400"
+                />
                 <DropZone position={{ type: 'absolute', row: 0, column: 0, span: 12 }} dropZoneType="canvas-empty" />
             </div>
         );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTemplateStore } from '../../store/templateStore';
 import type { Variable } from '../../types/template';
+import { TextInput, Select, Textarea, Button, EmptyState } from '../ui';
 
 interface VariableManagerProps {
     isOpen: boolean;
@@ -119,104 +120,72 @@ export function VariableManager({ isOpen, onClose }: VariableManagerProps) {
                     <div className="flex-1 overflow-y-auto p-6">
                         {isEditing ? (
                             <div className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">
-                                        Name <span className="text-danger">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        placeholder="e.g., Customer Name"
-                                        className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                                    />
-                                </div>
+                                <TextInput
+                                    label={<>Name <span className="text-danger">*</span></>}
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    placeholder="e.g., Customer Name"
+                                />
 
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">
-                                        Path <span className="text-danger">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.path}
-                                        onChange={(e) => setFormData({ ...formData, path: e.target.value })}
-                                        placeholder="e.g., .CustomerName"
-                                        className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink font-mono focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                                    />
-                                    <p className="text-xs text-slate-lighter mt-1.5">
-                                        Go template path (e.g., .Field, .Nested.Field, .Array[0])
-                                    </p>
-                                </div>
+                                <TextInput
+                                    label={<>Path <span className="text-danger">*</span></>}
+                                    type="text"
+                                    value={formData.path}
+                                    onChange={(e) => setFormData({ ...formData, path: e.target.value })}
+                                    placeholder="e.g., .CustomerName"
+                                    helperText="Go template path (e.g., .Field, .Nested.Field, .Array[0])"
+                                    className="font-mono"
+                                />
 
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">
-                                        Type
-                                    </label>
-                                    <select
-                                        value={formData.type}
-                                        onChange={(e) => setFormData({ ...formData, type: e.target.value as Variable['type'] })}
-                                        className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                                    >
-                                        <option value="string">String</option>
-                                        <option value="number">Number</option>
-                                        <option value="date">Date</option>
-                                        <option value="array">Array</option>
-                                    </select>
-                                </div>
+                                <Select
+                                    label="Type"
+                                    value={formData.type}
+                                    onChange={(e) => setFormData({ ...formData, type: e.target.value as Variable['type'] })}
+                                    options={[
+                                        { value: 'string', label: 'String' },
+                                        { value: 'number', label: 'Number' },
+                                        { value: 'date', label: 'Date' },
+                                        { value: 'array', label: 'Array' },
+                                    ]}
+                                />
 
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        value={formData.description}
-                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                        placeholder="Optional description"
-                                        rows={3}
-                                        className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                                    />
-                                </div>
+                                <Textarea
+                                    label="Description"
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    placeholder="Optional description"
+                                    rows={3}
+                                />
 
                                 <div className="flex gap-2 pt-4">
-                                    <button
-                                        onClick={handleSave}
-                                        className="px-5 py-2.5 bg-amber text-charcoal font-medium rounded-md hover:bg-amber-dark active:scale-95 shadow-md hover:shadow-lg transition-all"
-                                    >
+                                    <Button onClick={handleSave} variant="primary">
                                         {isCreating ? 'Create' : 'Save'}
-                                    </button>
-                                    <button
-                                        onClick={handleCancel}
-                                        className="px-5 py-2.5 bg-cream-dark text-ink font-medium rounded-md hover:bg-slate/20 active:scale-95 transition-all"
-                                    >
+                                    </Button>
+                                    <Button onClick={handleCancel} variant="secondary">
                                         Cancel
-                                    </button>
+                                    </Button>
                                     {!isCreating && (
-                                        <button
-                                            onClick={handleDelete}
-                                            className="ml-auto px-5 py-2.5 bg-danger/10 text-danger border border-danger/30 font-medium rounded-md hover:bg-danger/20 hover:border-danger active:scale-95 transition-all"
-                                        >
+                                        <Button onClick={handleDelete} variant="danger" className="ml-auto">
                                             Delete
-                                        </button>
+                                        </Button>
                                     )}
                                 </div>
                             </div>
                         ) : (
                             <>
                                 <div className="mb-4">
-                                    <button
-                                        onClick={handleNew}
-                                        className="px-5 py-2.5 bg-amber text-charcoal font-medium rounded-md hover:bg-amber-dark active:scale-95 shadow-md hover:shadow-lg transition-all"
-                                    >
+                                    <Button onClick={handleNew} variant="primary">
                                         + New Variable
-                                    </button>
+                                    </Button>
                                 </div>
 
                                 {variables.length === 0 ? (
-                                    <div className="text-center py-16">
-                                        <div className="text-4xl mb-3 opacity-30">📋</div>
-                                        <p className="text-slate-lighter font-medium">No variables defined yet</p>
-                                        <p className="text-sm text-slate-lighter/60 mt-2">Click "New Variable" to create one</p>
-                                    </div>
+                                    <EmptyState
+                                        icon="📋"
+                                        message="No variables defined yet"
+                                        helperText='Click "New Variable" to create one'
+                                    />
                                 ) : (
                                     <div className="space-y-3">
                                         {variables.map((variable) => (

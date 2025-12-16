@@ -2,6 +2,7 @@ import type { ComponentInstance } from '../../types/template';
 import type { GridContainerProps } from '../../types/components';
 import { hasGridPosition } from '../../types/template';
 import { useTemplateStore } from '../../store/templateStore';
+import { Button, NumberInput, Select } from '../ui';
 
 interface GridContainerPropertiesProps {
     component: ComponentInstance;
@@ -34,24 +35,18 @@ export function GridContainerProperties({ component }: GridContainerPropertiesPr
             {/* Header with unwrap button */}
             <div className="flex items-center justify-between p-3 bg-amber/10 border-2 border-amber/30 rounded-lg">
                 <h3 className="text-sm font-serif font-semibold text-charcoal">Grid Container</h3>
-                <button
-                    onClick={handleUnwrap}
-                    className="px-3 py-1.5 text-xs font-medium text-danger bg-danger/10 border border-danger/30 rounded hover:bg-danger/20 active:scale-95 transition-all"
-                >
+                <Button onClick={handleUnwrap} variant="danger" size="sm">
                     Unwrap
-                </button>
+                </Button>
             </div>
 
             {/* Column Management */}
             <div>
                 <div className="flex items-center justify-between mb-2">
                     <label className="text-xs font-medium text-slate-light uppercase tracking-wider">Columns</label>
-                    <button
-                        onClick={() => addGridColumn(component.id, 1)}
-                        className="px-3 py-1.5 text-xs font-medium text-charcoal bg-success/20 border border-success/40 rounded hover:bg-success/30 active:scale-95 transition-all"
-                    >
+                    <Button onClick={() => addGridColumn(component.id, 1)} variant="primary" size="sm">
                         + Add Column
-                    </button>
+                    </Button>
                 </div>
                 <p className="text-xs text-slate-lighter mb-2">
                     Fractional units (e.g., [1, 2, 1] = 25%, 50%, 25%)
@@ -89,44 +84,33 @@ export function GridContainerProperties({ component }: GridContainerPropertiesPr
             </div>
 
             {/* Gap */}
-            <div>
-                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Horizontal Gap (pt)</label>
-                <input
-                    type="number"
-                    value={props.gap}
-                    onChange={(e) => handleChange({ gap: Number(e.target.value) })}
-                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                    min="0"
-                />
-            </div>
+            <NumberInput
+                label="Horizontal Gap (pt)"
+                value={props.gap}
+                onChange={(gap) => handleChange({ gap })}
+                min={0}
+            />
 
             {/* Row Gap */}
-            <div>
-                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Vertical Gap (pt)</label>
-                <input
-                    type="number"
-                    value={props.rowGap || 0}
-                    onChange={(e) => handleChange({ rowGap: Number(e.target.value) })}
-                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                    min="0"
-                    placeholder="Same as horizontal"
-                />
-            </div>
+            <NumberInput
+                label="Vertical Gap (pt)"
+                value={props.rowGap || 0}
+                onChange={(rowGap) => handleChange({ rowGap })}
+                min={0}
+            />
 
             {/* Alignment */}
-            <div>
-                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Vertical Alignment</label>
-                <select
-                    value={props.alignment || 'start'}
-                    onChange={(e) => handleChange({ alignment: e.target.value as 'start' | 'center' | 'end' | 'stretch' })}
-                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                >
-                    <option value="start">Start</option>
-                    <option value="center">Center</option>
-                    <option value="end">End</option>
-                    <option value="stretch">Stretch</option>
-                </select>
-            </div>
+            <Select
+                label="Vertical Alignment"
+                value={props.alignment || 'start'}
+                onChange={(e) => handleChange({ alignment: e.target.value as 'start' | 'center' | 'end' | 'stretch' })}
+                options={[
+                    { value: 'start', label: 'Start' },
+                    { value: 'center', label: 'Center' },
+                    { value: 'end', label: 'End' },
+                    { value: 'stretch', label: 'Stretch' },
+                ]}
+            />
 
             {/* Child Component Positioning */}
             {children.length > 0 && (
@@ -135,6 +119,7 @@ export function GridContainerProperties({ component }: GridContainerPropertiesPr
                     <div className="space-y-3">
                         {children.map((child) => {
                             if (!hasGridPosition(child.position)) return null;
+                            const gridPos = child.position; // TypeScript should narrow this
 
                             return (
                                 <div key={child.id} className="border-2 border-cream-dark rounded p-3 space-y-2 bg-cream/30">
@@ -146,11 +131,12 @@ export function GridContainerProperties({ component }: GridContainerPropertiesPr
                                             <label className="block text-xs text-slate-light mb-1">Column</label>
                                             <input
                                                 type="number"
-                                                value={child.position.columnIndex}
+                                                value={gridPos.columnIndex}
                                                 onChange={(e) => {
                                                     updateChildGridPosition(component.id, child.id, {
-                                                        ...child.position,
+                                                        type: 'grid',
                                                         columnIndex: Number(e.target.value),
+                                                        span: gridPos.span,
                                                     });
                                                 }}
                                                 min={0}
@@ -162,15 +148,16 @@ export function GridContainerProperties({ component }: GridContainerPropertiesPr
                                             <label className="block text-xs text-slate-light mb-1">Span</label>
                                             <input
                                                 type="number"
-                                                value={child.position.span}
+                                                value={gridPos.span}
                                                 onChange={(e) => {
                                                     updateChildGridPosition(component.id, child.id, {
-                                                        ...child.position,
+                                                        type: 'grid',
+                                                        columnIndex: gridPos.columnIndex,
                                                         span: Number(e.target.value),
                                                     });
                                                 }}
                                                 min={1}
-                                                max={props.columns.length - child.position.columnIndex}
+                                                max={props.columns.length - gridPos.columnIndex}
                                                 className="w-full px-2 py-1.5 border-2 border-cream-dark rounded text-xs bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
                                             />
                                         </div>

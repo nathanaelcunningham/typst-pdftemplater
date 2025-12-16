@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useTemplateStore } from '../../store/templateStore';
 import type { Variable } from '../../types/template';
+import { SectionHeader, EmptyState } from '../ui';
 
 export function VariableValuesPanel() {
     const variables = useTemplateStore((state) => state.variables);
@@ -25,22 +26,18 @@ export function VariableValuesPanel() {
 
     return (
         <div className="flex flex-col h-full overflow-hidden">
-            <div className="p-6 border-b-2 border-cream-dark bg-gradient-to-b from-cream/50 to-transparent">
-                <h2 className="text-lg font-serif font-semibold text-charcoal tracking-tight">
-                    Variable Values
-                </h2>
-                <p className="text-xs text-slate-lighter mt-1">
-                    Enter values for preview
-                </p>
-            </div>
+            <SectionHeader
+                title="Variable Values"
+                description="Enter values for preview"
+            />
 
             <div className="flex-1 overflow-y-auto p-5">
                 {variables.length === 0 ? (
-                    <div className="text-center py-16">
-                        <div className="text-4xl mb-3 opacity-30">📋</div>
-                        <p className="text-sm text-slate-lighter font-medium">No variables defined</p>
-                        <p className="text-xs text-slate-lighter/60 mt-2">Add variables in Variable Manager</p>
-                    </div>
+                    <EmptyState
+                        icon="📋"
+                        message="No variables defined"
+                        helperText="Add variables in Variable Manager"
+                    />
                 ) : (
                     <div className="space-y-5">
                         {variables.map((variable) => {

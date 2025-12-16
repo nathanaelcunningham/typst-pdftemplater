@@ -1,6 +1,7 @@
 import { useTemplateStore } from '../../store/templateStore';
 import { generateTypst } from '../../generators/typstGenerator';
 import { previewTemplate, HTTPError } from '../../api';
+import { Button } from '../ui';
 
 export function PreviewPanel() {
     const components = useTemplateStore((state) => state.components);
@@ -55,13 +56,14 @@ export function PreviewPanel() {
         <div className="flex flex-col h-full bg-charcoal">
             {/* Preview Controls */}
             <div className="shrink-0 bg-paper border-b-2 border-cream-dark p-5">
-                <button
+                <Button
                     onClick={handleCompile}
                     disabled={preview.isLoading}
-                    className="w-full px-5 py-3 text-sm font-medium text-charcoal bg-amber rounded-md hover:bg-amber-dark disabled:bg-slate-light disabled:text-cream disabled:cursor-not-allowed active:scale-95 shadow-md hover:shadow-lg transition-all"
+                    variant="primary"
+                    className="w-full px-5 py-3"
                 >
                     {preview.isLoading ? 'Compiling...' : 'Generate Preview'}
-                </button>
+                </Button>
             </div>
 
             {/* PDF Viewer Section */}

@@ -2,6 +2,7 @@ import type { ComponentInstance } from '../../types/template';
 import type { ImageComponentProps } from '../../types/components';
 import { useTemplateStore } from '../../store/templateStore';
 import { VariableSelector } from './VariableSelector';
+import { TextInput, Select } from '../ui';
 
 interface ImagePropertiesProps {
     component: ComponentInstance;
@@ -24,19 +25,14 @@ export function ImageProperties({ component }: ImagePropertiesProps) {
     return (
         <div className="space-y-4">
             {/* Source */}
-            <div>
-                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Image Source</label>
-                <input
-                    type="text"
-                    value={props.source}
-                    onChange={(e) => handleChange({ source: e.target.value })}
-                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                    placeholder="URL or {{.Variable}}"
-                />
-                <p className="text-xs text-slate-lighter mt-1.5">
-                    Enter image URL or use {`{{.Variable}}`} for dynamic images
-                </p>
-            </div>
+            <TextInput
+                label="Image Source"
+                type="text"
+                value={props.source}
+                onChange={(e) => handleChange({ source: e.target.value })}
+                placeholder="URL or {{.Variable}}"
+                helperText={`Enter image URL or use {{.Variable}} for dynamic images`}
+            />
 
             {/* Width */}
             <div>
@@ -73,30 +69,25 @@ export function ImageProperties({ component }: ImagePropertiesProps) {
             </div>
 
             {/* Alignment */}
-            <div>
-                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Alignment</label>
-                <select
-                    value={props.alignment}
-                    onChange={(e) => handleChange({ alignment: e.target.value as 'left' | 'center' | 'right' })}
-                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                >
-                    <option value="left">Left</option>
-                    <option value="center">Center</option>
-                    <option value="right">Right</option>
-                </select>
-            </div>
+            <Select
+                label="Alignment"
+                value={props.alignment}
+                onChange={(e) => handleChange({ alignment: e.target.value as 'left' | 'center' | 'right' })}
+                options={[
+                    { value: 'left', label: 'Left' },
+                    { value: 'center', label: 'Center' },
+                    { value: 'right', label: 'Right' },
+                ]}
+            />
 
             {/* Alt Text */}
-            <div>
-                <label className="block text-xs font-medium text-slate-light uppercase tracking-wider mb-2">Alt Text</label>
-                <input
-                    type="text"
-                    value={props.alt}
-                    onChange={(e) => handleChange({ alt: e.target.value })}
-                    className="w-full px-3 py-2.5 border-2 border-cream-dark rounded-md text-sm bg-paper text-ink focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 transition-all"
-                    placeholder="Image description"
-                />
-            </div>
+            <TextInput
+                label="Alt Text"
+                type="text"
+                value={props.alt}
+                onChange={(e) => handleChange({ alt: e.target.value })}
+                placeholder="Image description"
+            />
 
             {/* Insert Variable */}
             <VariableSelector onSelect={handleVariableInsert} />

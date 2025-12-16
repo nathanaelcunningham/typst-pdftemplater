@@ -5,6 +5,7 @@ import { TableProperties } from './TableProperties';
 import { GridContainerProperties } from './GridContainerProperties';
 import { StackContainerProperties } from './StackContainerProperties';
 import type { ComponentInstance } from '../../types/template';
+import { Button, EmptyState } from '../ui';
 
 // Helper function to find a component by ID, including nested children
 function findComponentById(components: ComponentInstance[], id: string | null): ComponentInstance | undefined {
@@ -33,11 +34,11 @@ export function PropertyPanel() {
 
   if (!selectedComponent) {
     return (
-      <div className="text-center py-16 px-4">
-        <div className="text-4xl mb-3 opacity-30">✨</div>
-        <p className="text-sm text-slate-lighter font-medium">Select a component</p>
-        <p className="text-xs text-slate-lighter/60 mt-1">to edit its properties</p>
-      </div>
+      <EmptyState
+        icon="✨"
+        message="Select a component"
+        helperText="to edit its properties"
+      />
     );
   }
 
@@ -63,12 +64,9 @@ export function PropertyPanel() {
         <div className="text-sm font-serif font-semibold text-charcoal capitalize">
           {selectedComponent.type.replace('-', ' ')} Component
         </div>
-        <button
-          onClick={handleDelete}
-          className="px-3 py-1.5 text-xs font-medium text-danger bg-danger/10 border border-danger/30 rounded hover:bg-danger/20 hover:border-danger active:scale-95 transition-all"
-        >
+        <Button onClick={handleDelete} variant="danger" size="sm">
           Delete
-        </button>
+        </Button>
       </div>
 
       {/* Component-specific properties */}
