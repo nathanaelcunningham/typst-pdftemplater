@@ -17,7 +17,7 @@ RUN go build -o api ./cmd/api
 RUN chown appuser:appuser /app/api
 
 RUN mkdir -p /usr/share/fonts/custom_fonts
-COPY ./backend/assets/Poppins /usr/share/fonts/custom_fonts
+COPY ./assets/Poppins /usr/share/fonts/custom_fonts
 RUN apk add --no-cache fontconfig
 RUN fc-cache -f -v
 
