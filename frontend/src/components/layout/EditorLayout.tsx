@@ -1,13 +1,16 @@
 import { DndContext, type DragEndEvent, type DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useState, useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { ComponentPalette } from './ComponentPalette';
 import { Canvas } from './Canvas';
 import { PropertyEditor } from './PropertyEditor';
 import { VariableManager } from './VariableManager';
 import { PreviewPanel } from '../preview/PreviewPanel';
 import { VariableValuesPanel } from '../preview/VariableValuesPanel';
+import { CommandPalette } from '../ui/CommandPalette';
 import { useTemplateStore } from '../../store/templateStore';
 import { generateTypst } from '../../generators/typstGenerator';
+import { getTemplate } from '../../api';
 import type { ComponentType } from '../../types/template';
 import { hasAbsolutePosition } from '../../types/template';
 import { defaultTextProps, defaultImageProps, defaultTableProps, defaultGridContainerProps, defaultStackContainerProps } from '../../types/components';
@@ -15,9 +18,12 @@ import { defaultTextProps, defaultImageProps, defaultTableProps, defaultGridCont
 type CenterTab = 'editor' | 'code' | 'preview';
 
 export function EditorLayout() {
+    const { templateId } = useParams<{ templateId: string }>();
     const [showVariables, setShowVariables] = useState(false);
-    const [saveMessage, setSaveMessage] = useState('');
+    const [showCommandPalette, setShowCommandPalette] = useState(false);
     const [activeTab, setActiveTab] = useState<CenterTab>('editor');
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const {
         addComponent,
         setDragging,
@@ -29,9 +35,11 @@ export function EditorLayout() {
         grid,
         addToContainer,
         addGridColumn,
-        saveToLocalStorage,
-        loadFromLocalStorage,
         clearPreview,
+        currentTemplateName,
+        hasUnsavedChanges,
+        createBlankTemplate,
+        loadTemplateData,
     } = useTemplateStore();
 
     // Generate Typst code (memoized for performance)
@@ -311,28 +319,49 @@ export function EditorLayout() {
         }
     };
 
-    // Auto-load on mount
+    // Load template from URL or initialize blank template
     useEffect(() => {
-        loadFromLocalStorage();
-    }, [loadFromLocalStorage]);
+        const loadTemplate = async () => {
+            if (templateId) {
+                // Load existing template from URL
+                setIsLoading(true);
+                setLoadError(null);
+                try {
+                    const template = await getTemplate(templateId);
+                    loadTemplateData(template);
+                } catch (err) {
+                    console.error('Failed to load template:', err);
+                    setLoadError('Failed to load template. Please try again.');
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                // Create blank template for new template
+                createBlankTemplate();
+            }
+        };
 
-    // Handle save with feedback
-    const handleSave = () => {
-        saveToLocalStorage();
-        setSaveMessage('Saved!');
-        setTimeout(() => setSaveMessage(''), 2000);
-    };
+        loadTemplate();
+    }, [templateId, createBlankTemplate, loadTemplateData]);
 
     // Keyboard shortcuts
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            // Don't handle shortcuts if user is typing in an input/textarea (except Cmd+K)
+            const target = event.target as HTMLElement;
+            const isTyping = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+
+            // Open command palette on Cmd+K / Ctrl+K
+            if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+                event.preventDefault();
+                setShowCommandPalette(true);
+                return;
+            }
+
+            if (isTyping) return;
+
             // Delete selected component on Delete or Backspace
             if ((event.key === 'Delete' || event.key === 'Backspace') && selectedComponentId) {
-                // Don't delete if user is typing in an input/textarea
-                const target = event.target as HTMLElement;
-                if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-                    return;
-                }
                 event.preventDefault();
                 removeComponent(selectedComponentId);
             }
@@ -340,12 +369,6 @@ export function EditorLayout() {
             // Deselect on Escape
             if (event.key === 'Escape' && selectedComponentId) {
                 selectComponent(null);
-            }
-
-            // Save on Cmd+S / Ctrl+S
-            if ((event.metaKey || event.ctrlKey) && event.key === 's') {
-                event.preventDefault();
-                handleSave();
             }
         };
 
@@ -356,23 +379,68 @@ export function EditorLayout() {
     return (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="flex flex-col h-screen bg-cream font-sans">
+                {/* Loading Overlay */}
+                {isLoading && (
+                    <div className="fixed inset-0 bg-charcoal/50 backdrop-blur-sm z-50 flex items-center justify-center">
+                        <div className="bg-paper border-2 border-cream-dark rounded-lg p-8 shadow-2xl">
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="w-12 h-12 border-4 border-amber border-t-transparent rounded-full animate-spin" />
+                                <p className="text-lg font-medium text-ink">Loading template...</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Error Overlay */}
+                {loadError && (
+                    <div className="fixed inset-0 bg-charcoal/50 backdrop-blur-sm z-50 flex items-center justify-center">
+                        <div className="bg-paper border-2 border-red-300 rounded-lg p-8 shadow-2xl max-w-md">
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="text-4xl">⚠️</div>
+                                <h2 className="text-xl font-serif font-semibold text-ink">Error Loading Template</h2>
+                                <p className="text-slate-lighter text-center">{loadError}</p>
+                                <button
+                                    onClick={() => window.location.href = '/templates'}
+                                    className="px-6 py-3 text-sm font-medium text-charcoal bg-amber rounded-md hover:bg-amber-dark active:scale-95 transition-all shadow-md"
+                                >
+                                    Back to Templates
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Top Bar - Editorial Header */}
                 <div className="h-16 bg-charcoal border-b-2 border-amber flex items-center px-8 shadow-lg">
-                    <h1 className="text-2xl font-serif font-semibold text-cream tracking-tight">
-                        PDF Template Builder
-                    </h1>
+                    {/* Menu Button */}
+                    <button
+                        onClick={() => setShowCommandPalette(true)}
+                        className="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-slate/20 transition-colors group"
+                        title="Open menu (Cmd+K)"
+                    >
+                        <svg className="w-5 h-5 text-cream" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <span className="text-xl font-serif font-semibold text-cream tracking-tight">
+                            Templateer
+                        </span>
+                    </button>
+
+                    {/* Template Name */}
+                    <div className="ml-6 flex items-center gap-2 text-cream/70">
+                        <span className="text-sm">Template:</span>
+                        <span className="text-sm font-medium text-cream">{currentTemplateName}</span>
+                    </div>
+
                     <div className="ml-auto flex items-center gap-3">
-                        {saveMessage && (
-                            <span className="text-sm text-success font-medium animate-in fade-in duration-200">
-                                {saveMessage}
-                            </span>
+                        {/* Unsaved Changes Indicator */}
+                        {hasUnsavedChanges && (
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-amber/20 border border-amber/40 rounded-md">
+                                <div className="w-2 h-2 rounded-full bg-amber animate-pulse" />
+                                <span className="text-xs font-medium text-amber">Unsaved</span>
+                            </div>
                         )}
-                        <button
-                            onClick={handleSave}
-                            className="px-5 py-2.5 text-sm font-medium text-charcoal bg-amber rounded-md hover:bg-amber-dark active:scale-95 transition-all shadow-md hover:shadow-lg"
-                        >
-                            Save
-                        </button>
+
                         <button
                             onClick={() => setShowVariables(true)}
                             className="px-5 py-2.5 text-sm font-medium text-cream bg-slate border border-slate-light rounded-md hover:bg-slate-light active:scale-95 transition-all"
@@ -384,6 +452,13 @@ export function EditorLayout() {
 
                 {/* Variable Manager Modal */}
                 <VariableManager isOpen={showVariables} onClose={() => setShowVariables(false)} />
+
+                {/* Command Palette */}
+                <CommandPalette
+                    isOpen={showCommandPalette}
+                    onClose={() => setShowCommandPalette(false)}
+                    onOpenVariables={() => setShowVariables(true)}
+                />
 
                 {/* Main Content Area */}
                 <div className="flex flex-1 overflow-hidden">

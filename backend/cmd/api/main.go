@@ -21,7 +21,7 @@ func main() {
 }
 
 func run() error {
-	db, err := sqlite.NewDB("./db")
+	db, err := sqlite.NewDB("./tmp/db")
 	if err != nil {
 		return fmt.Errorf("failed to initialize database: %w", err)
 	}
@@ -32,7 +32,7 @@ func run() error {
 
 	srv := server.New(server.Config{
 		Port:            "1234",
-		AllowedOrigins:  []string{"http://localhost:3000"},
+		AllowedOrigins:  []string{"*"},
 		TemplateService: templateService,
 	})
 

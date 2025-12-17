@@ -1,11 +1,19 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { ComponentInstance, Variable, Position, TemplateState, GridPosition } from '../types/template';
+import type { ComponentInstance, Variable, Position, TemplateState, GridPosition, GridConfig } from '../types/template';
 import { hasGridPosition, hasRelativePosition } from '../types/template';
 import type { GridContainerProps, StackContainerProps } from '../types/components';
 import { defaultGridContainerProps, defaultStackContainerProps } from '../types/components';
 
 interface TemplateStore extends TemplateState {
+    // Template management actions
+    createBlankTemplate: () => void;
+    loadTemplateData: (template: { id: string; name: string; description: string; content: { grid: GridConfig; components: ComponentInstance[]; variables: Variable[] } }) => void;
+    updateTemplateName: (name: string) => void;
+    updateTemplateDescription: (description: string) => void;
+    markSaved: () => void;
+    markUnsaved: () => void;
+
     // Component actions
     addComponent: (component: ComponentInstance) => void;
     updateComponent: (id: string, updates: Partial<ComponentInstance>) => void;
@@ -52,7 +60,7 @@ interface TemplateStore extends TemplateState {
     setGridColumns: (columns: number) => void;
     setGridGap: (gap: number) => void;
 
-    // Save/Load actions
+    // Deprecated - to be removed
     saveToLocalStorage: () => void;
     loadFromLocalStorage: () => void;
 }
@@ -60,6 +68,10 @@ interface TemplateStore extends TemplateState {
 export const useTemplateStore = create<TemplateStore>()(
     immer((set, get) => ({
         // Initial state
+        currentTemplateId: null,
+        currentTemplateName: 'Untitled Template',
+        currentTemplateDescription: '',
+        hasUnsavedChanges: false,
         grid: {
             columns: 12,
             gap: 16,
@@ -75,10 +87,78 @@ export const useTemplateStore = create<TemplateStore>()(
             variableValues: [],
         },
 
+        // Template management actions
+        createBlankTemplate: () =>
+            set((state) => {
+                state.currentTemplateId = null;
+                state.currentTemplateName = 'Untitled Template';
+                state.currentTemplateDescription = '';
+                state.hasUnsavedChanges = false;
+                state.grid = { columns: 12, gap: 16 };
+                state.components = [];
+                state.variables = [];
+                state.selectedComponentId = null;
+                // Clear preview
+                if (state.preview.pdfUrl) {
+                    URL.revokeObjectURL(state.preview.pdfUrl);
+                }
+                state.preview = {
+                    isLoading: false,
+                    pdfUrl: null,
+                    error: null,
+                    variableValues: [],
+                };
+            }),
+
+        loadTemplateData: (template) =>
+            set((state) => {
+                state.currentTemplateId = template.id;
+                state.currentTemplateName = template.name;
+                state.currentTemplateDescription = template.description;
+                state.hasUnsavedChanges = false;
+                state.grid = template.content.grid;
+                state.components = template.content.components;
+                state.variables = template.content.variables;
+                state.selectedComponentId = null;
+                // Clear preview
+                if (state.preview.pdfUrl) {
+                    URL.revokeObjectURL(state.preview.pdfUrl);
+                }
+                state.preview = {
+                    isLoading: false,
+                    pdfUrl: null,
+                    error: null,
+                    variableValues: [],
+                };
+            }),
+
+        updateTemplateName: (name) =>
+            set((state) => {
+                state.currentTemplateName = name;
+                state.hasUnsavedChanges = true;
+            }),
+
+        updateTemplateDescription: (description) =>
+            set((state) => {
+                state.currentTemplateDescription = description;
+                state.hasUnsavedChanges = true;
+            }),
+
+        markSaved: () =>
+            set((state) => {
+                state.hasUnsavedChanges = false;
+            }),
+
+        markUnsaved: () =>
+            set((state) => {
+                state.hasUnsavedChanges = true;
+            }),
+
         // Component actions
         addComponent: (component) =>
             set((state) => {
                 state.components.push(component);
+                state.hasUnsavedChanges = true;
             }),
 
         updateComponent: (id, updates) =>
@@ -99,6 +179,7 @@ export const useTemplateStore = create<TemplateStore>()(
                 };
 
                 updateComponentRecursive(state.components);
+                state.hasUnsavedChanges = true;
             }),
 
         removeComponent: (id) =>
@@ -107,6 +188,7 @@ export const useTemplateStore = create<TemplateStore>()(
                 if (state.selectedComponentId === id) {
                     state.selectedComponentId = null;
                 }
+                state.hasUnsavedChanges = true;
             }),
 
         moveComponent: (id, newPosition) =>
@@ -131,6 +213,7 @@ export const useTemplateStore = create<TemplateStore>()(
         addVariable: (variable) =>
             set((state) => {
                 state.variables.push(variable);
+                state.hasUnsavedChanges = true;
             }),
 
         updateVariable: (id, updates) =>
@@ -139,11 +222,13 @@ export const useTemplateStore = create<TemplateStore>()(
                 if (index !== -1) {
                     state.variables[index] = { ...state.variables[index], ...updates };
                 }
+                state.hasUnsavedChanges = true;
             }),
 
         removeVariable: (id) =>
             set((state) => {
                 state.variables = state.variables.filter((v) => v.id !== id);
+                state.hasUnsavedChanges = true;
             }),
 
         // Preview actions

@@ -12,4 +12,10 @@ type Template struct {
 }
 
 type TemplateContent struct {
+	Grid struct {
+		Columns int
+		Gap     int
+	}
+	Components []any // ComponentInstance[]
+	Variables  []any // Variable[]
 }

@@ -20,7 +20,7 @@ func (s *Server) handleListTemplates(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := NewTemplateResponses(templates)
+	response := NewListTemplateResponse(templates)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }

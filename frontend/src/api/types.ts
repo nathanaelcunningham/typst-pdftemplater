@@ -12,8 +12,37 @@ export interface CompileResponse {
   pdf: Blob;
 }
 
-// Add more API types here as you expand the API
-// Examples:
-// export interface SaveTemplateRequest { ... }
-// export interface LoadTemplateResponse { ... }
-// export interface ListTemplatesResponse { ... }
+// Template CRUD types
+export interface TemplateContent {
+  grid: {
+    columns: number;
+    gap: number;
+  };
+  components: any[]; // ComponentInstance[]
+  variables: any[];  // Variable[]
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  description: string;
+  content: TemplateContent;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTemplateRequest {
+  name: string;
+  description: string;
+  content: TemplateContent;
+}
+
+export interface UpdateTemplateRequest {
+  name?: string;
+  description?: string;
+  content?: TemplateContent;
+}
+
+export interface ListTemplatesResponse {
+  templates: Template[];
+}

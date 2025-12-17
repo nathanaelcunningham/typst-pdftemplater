@@ -1,4 +1,4 @@
-MIGRATION_DIR=internal/db/migrations
+MIGRATION_DIR=assets/migrations
 DB_PATH=sqlite://tmp/db
 
 gen/sql:

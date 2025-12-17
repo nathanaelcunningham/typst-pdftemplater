@@ -56,10 +56,34 @@ export interface GridConfig {
     gap: number;      // Gap between columns in pixels (default: 16)
 }
 
-export interface TemplateState {
+export interface TemplateContent {
     grid: GridConfig;
     components: ComponentInstance[];
     variables: Variable[];
+}
+
+export interface Template {
+    id: string;
+    name: string;
+    description: string;
+    content: TemplateContent;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface TemplateState {
+    // Current template metadata
+    currentTemplateId: string | null;
+    currentTemplateName: string;
+    currentTemplateDescription: string;
+    hasUnsavedChanges: boolean;
+
+    // Current template data
+    grid: GridConfig;
+    components: ComponentInstance[];
+    variables: Variable[];
+
+    // UI state
     selectedComponentId: string | null;
     isDragging: boolean;
     preview: PreviewState;

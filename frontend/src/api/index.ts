@@ -8,7 +8,22 @@ export { apiClient, HTTPError } from './client';
 export type { ApiResponse } from './client';
 
 // Export API types
-export type { CompileRequest, CompileResponse } from './types';
+export type {
+  CompileRequest,
+  CompileResponse,
+  Template,
+  TemplateContent,
+  CreateTemplateRequest,
+  UpdateTemplateRequest,
+  ListTemplatesResponse
+} from './types';
 
 // Export template services
-export { previewTemplate } from './templates';
+export {
+  previewTemplate,
+  listTemplates,
+  getTemplate,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate
+} from './templates';
