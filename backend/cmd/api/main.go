@@ -9,9 +9,13 @@ import (
 	"syscall"
 	"time"
 
+	"pdfgen/internal/models"
 	"pdfgen/internal/persistance/sqlite"
 	"pdfgen/internal/server"
 	"pdfgen/internal/templates"
+
+	"github.com/hallgren/eventsourcing/aggregate"
+	essql "github.com/hallgren/eventsourcing/eventstore/sql"
 )
 
 func main() {
@@ -27,8 +31,17 @@ func run() error {
 	}
 	defer db.Close()
 
-	templateRepo := sqlite.NewTemplateRepository(db)
-	templateService := templates.NewService(templateRepo)
+	es, err := essql.NewSQLite(db)
+	if err != nil {
+		panic(err)
+	}
+
+	aggregate.Register(&models.Template{})
+
+	listProjection := models.NewListTemplatesProjection()
+	go listProjection.Run(context.Background(), es, time.Millisecond*500)
+
+	templateService := templates.NewService(es, listProjection)
 
 	srv := server.New(server.Config{
 		Port:            "1234",

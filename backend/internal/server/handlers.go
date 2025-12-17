@@ -14,15 +14,11 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleListTemplates(w http.ResponseWriter, r *http.Request) {
-	templates, err := s.templateService.ListTemplates(r.Context())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	templates := s.templateService.ListTemplates(r.Context())
 
-	templatesDto := make([]template, 0, len(templates))
+	templatesDto := make([]templateListItem, 0, len(templates))
 	for _, t := range templates {
-		var tDTO template
+		var tDTO templateListItem
 		tDTO.FromModel(t)
 		templatesDto = append(templatesDto, tDTO)
 	}
@@ -98,13 +94,13 @@ func (s *Server) handleUpdateTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t := template{
-		ID:          id,
-		Name:        req.Name,
-		Description: req.Description,
-		Content:     req.Content,
-	}
-	updated, err := s.templateService.UpdateTemplate(r.Context(), t.ToModel())
+	updated, err := s.templateService.UpdateTemplate(
+		r.Context(),
+		id,
+		req.Name,
+		req.Description,
+		*req.Content.ToModel(),
+	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

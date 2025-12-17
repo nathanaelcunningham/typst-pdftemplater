@@ -11,6 +11,10 @@ require (
 )
 
 require (
+	github.com/hallgren/eventsourcing v0.9.1 // indirect
+	github.com/hallgren/eventsourcing/core v0.5.2 // indirect
+	github.com/hallgren/eventsourcing/eventstore/sql v0.7.0 // indirect
+	github.com/sergi/go-diff v1.4.0
 	github.com/smasher164/xid v0.1.2 // indirect
 	golang.org/x/text v0.3.3 // indirect
 )

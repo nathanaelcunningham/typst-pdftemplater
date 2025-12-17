@@ -21,7 +21,7 @@ type UpdateTemplateResponse struct {
 }
 
 type ListTemplateResponse struct {
-	Templates []template `json:"templates"`
+	Templates []templateListItem `json:"templates"`
 }
 
 type GetTemplateResponse struct {

@@ -5,17 +5,36 @@ import (
 	"time"
 )
 
+type templateListItem struct {
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Archived    bool      `json:"archived"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+}
+
+func (l *templateListItem) FromModel(m models.TemplateListItem) {
+	l.ID = m.ID
+	l.Name = m.Name
+	l.Description = m.Description
+	l.Archived = m.Archived
+	l.CreatedAt = m.CreatedAt
+	l.UpdatedAt = m.UpdatedAt
+}
+
 type template struct {
 	ID          string          `json:"id"`
 	Name        string          `json:"name"`
 	Description string          `json:"description"`
 	Content     templateContent `json:"content"`
+	Archived    bool            `json:"archived"`
 	CreatedAt   time.Time       `json:"createdAt"`
 	UpdatedAt   time.Time       `json:"updatedAt"`
 }
 
 func (t *template) FromModel(m *models.Template) {
-	t.ID = m.ID
+	t.ID = m.ID()
 	t.Name = m.Name
 	t.Description = m.Description
 	t.Content.FromModel(&m.Content)
@@ -24,14 +43,16 @@ func (t *template) FromModel(m *models.Template) {
 }
 
 func (t *template) ToModel() *models.Template {
-	return &models.Template{
-		ID:          t.ID,
+	m := &models.Template{
 		Name:        t.Name,
 		Description: t.Description,
 		Content:     *t.Content.ToModel(),
+		Archived:    t.Archived,
 		CreatedAt:   t.CreatedAt,
 		UpdatedAt:   t.UpdatedAt,
 	}
+	m.SetID(t.ID)
+	return m
 }
 
 type templateContent struct {

@@ -46,7 +46,10 @@ func (r *TemplateRepository) CreateTemplate(ctx context.Context, template *model
 	return nil
 }
 
-func (r *TemplateRepository) GetTemplateByID(ctx context.Context, id string) (*models.Template, error) {
+func (r *TemplateRepository) GetTemplateByID(
+	ctx context.Context,
+	id string,
+) (*models.Template, error) {
 	query := `
 		SELECT id, name, description, content, created_at, updated_at
 		FROM templates
@@ -56,8 +59,9 @@ func (r *TemplateRepository) GetTemplateByID(ctx context.Context, id string) (*m
 	var template models.Template
 	var contentJSON []byte
 
+	newID := template.ID // to scan into the ID field
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
-		&template.ID,
+		&newID,
 		&template.Name,
 		&template.Description,
 		&contentJSON,
@@ -150,8 +154,9 @@ func (r *TemplateRepository) ListTemplates(ctx context.Context) ([]*models.Templ
 		var template models.Template
 		var contentJSON []byte
 
+		newID := template.ID // to scan into the ID field
 		err := rows.Scan(
-			&template.ID,
+			&newID,
 			&template.Name,
 			&template.Description,
 			&contentJSON,

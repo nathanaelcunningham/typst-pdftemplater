@@ -4,36 +4,34 @@ import (
 	"context"
 	"fmt"
 	"pdfgen/internal/models"
-	"pdfgen/internal/persistance"
-	"time"
 
-	"github.com/google/uuid"
+	"github.com/hallgren/eventsourcing/aggregate"
+	essql "github.com/hallgren/eventsourcing/eventstore/sql"
 )
 
 type Service struct {
-	repo persistance.TemplateRepository
+	es             *essql.SQLite
+	listProjection *models.ListTemplatesProjection
 }
 
-func NewService(repo persistance.TemplateRepository) *Service {
+func NewService(es *essql.SQLite, listProjection *models.ListTemplatesProjection) *Service {
 	return &Service{
-		repo: repo,
+		es:             es,
+		listProjection: listProjection,
 	}
 }
 
-func (s *Service) CreateTemplate(ctx context.Context, template *models.Template) (*models.Template, error) {
+func (s *Service) CreateTemplate(
+	ctx context.Context,
+	template *models.Template,
+) (*models.Template, error) {
 	if template.Name == "" {
 		return nil, fmt.Errorf("template name is required")
 	}
 
-	template.ID = uuid.New().String()
-	template.CreatedAt = time.Now()
-	template.UpdatedAt = time.Now()
-
-	if err := s.repo.CreateTemplate(ctx, template); err != nil {
-		return nil, fmt.Errorf("failed to create template: %w", err)
-	}
-
-	return template, nil
+	newTemplate := models.CreateTemplate(template.Name, template.Description, template.Content)
+	err := aggregate.Save(s.es, newTemplate)
+	return newTemplate, err
 }
 
 func (s *Service) GetTemplate(ctx context.Context, id string) (*models.Template, error) {
@@ -41,26 +39,35 @@ func (s *Service) GetTemplate(ctx context.Context, id string) (*models.Template,
 		return nil, fmt.Errorf("template id is required")
 	}
 
-	template, err := s.repo.GetTemplateByID(ctx, id)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get template: %w", err)
+	template := &models.Template{}
+	if err := aggregate.Load(ctx, s.es, id, template); err != nil {
+		return nil, err
 	}
-
 	return template, nil
 }
 
-func (s *Service) UpdateTemplate(ctx context.Context, template *models.Template) (*models.Template, error) {
-	if template.ID == "" {
+func (s *Service) UpdateTemplate(
+	ctx context.Context,
+	id string,
+	name, description string,
+	content models.TemplateContent,
+) (*models.Template, error) {
+	if id == "" {
 		return nil, fmt.Errorf("template id is required")
 	}
-	if template.Name == "" {
+	if name == "" {
 		return nil, fmt.Errorf("template name is required")
 	}
 
-	template.UpdatedAt = time.Now()
+	// Load the existing aggregate first to get the correct version
+	template := &models.Template{}
+	if err := aggregate.Load(ctx, s.es, id, template); err != nil {
+		return nil, fmt.Errorf("failed to load template: %w", err)
+	}
 
-	if err := s.repo.UpdateTemplate(ctx, template); err != nil {
-		return nil, fmt.Errorf("failed to update template: %w", err)
+	template.UpdateTemplate(name, description, content)
+	if err := aggregate.Save(s.es, template); err != nil {
+		return nil, fmt.Errorf("failed to save template: %w", err)
 	}
 
 	return template, nil
@@ -71,18 +78,20 @@ func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 		return fmt.Errorf("template id is required")
 	}
 
-	if err := s.repo.DeleteTemplate(ctx, id); err != nil {
-		return fmt.Errorf("failed to delete template: %w", err)
+	template := &models.Template{}
+	if err := aggregate.Load(ctx, s.es, id, template); err != nil {
+		return err
+	}
+
+	template.ArchiveTemplate()
+	err := aggregate.Save(s.es, template)
+	if err != nil {
+		return fmt.Errorf("failed to archive template: %w", err)
 	}
 
 	return nil
 }
 
-func (s *Service) ListTemplates(ctx context.Context) ([]*models.Template, error) {
-	templates, err := s.repo.ListTemplates(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to list templates: %w", err)
-	}
-
-	return templates, nil
+func (s *Service) ListTemplates(ctx context.Context) []models.TemplateListItem {
+	return s.listProjection.Templates
 }
