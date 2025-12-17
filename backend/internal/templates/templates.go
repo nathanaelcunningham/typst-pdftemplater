@@ -78,7 +78,7 @@ func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 	return nil
 }
 
-func (s *Service) ListTemplates(ctx context.Context) ([]models.Template, error) {
+func (s *Service) ListTemplates(ctx context.Context) ([]*models.Template, error) {
 	templates, err := s.repo.ListTemplates(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list templates: %w", err)

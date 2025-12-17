@@ -5,132 +5,59 @@ import (
 	"time"
 )
 
-type CreateTemplateRequest struct {
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Content     models.TemplateContent `json:"content"`
-}
-
-func (r *CreateTemplateRequest) ToModel() *models.Template {
-	return &models.Template{
-		Name:        r.Name,
-		Description: r.Description,
-		Content:     r.Content,
-	}
-}
-
-type UpdateTemplateRequest struct {
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Content     models.TemplateContent `json:"content"`
-}
-
-func (r *UpdateTemplateRequest) ToModel(id string) *models.Template {
-	return &models.Template{
-		ID:          id,
-		Name:        r.Name,
-		Description: r.Description,
-		Content:     r.Content,
-	}
-}
-
-type ListTemplateResponse struct {
-	Templates []TemplateResponse `json:"templates"`
-}
-
-type TemplateResponse struct {
+type template struct {
 	ID          string          `json:"id"`
 	Name        string          `json:"name"`
 	Description string          `json:"description"`
-	Content     TemplateContent `json:"content"`
+	Content     templateContent `json:"content"`
 	CreatedAt   time.Time       `json:"createdAt"`
 	UpdatedAt   time.Time       `json:"updatedAt"`
 }
 
-type TemplateContent struct {
-	Grid struct {
-		Columns int `json:"columns"`
-		Gap     int `json:"gap"`
-	} `json:"grid"`
-	Components []any `json:"components"` // ComponentInstance[]
-	Variables  []any `json:"variables"`  // Variable[]
+func (t *template) FromModel(m *models.Template) {
+	t.ID = m.ID
+	t.Name = m.Name
+	t.Description = m.Description
+	t.Content.FromModel(&m.Content)
+	t.CreatedAt = m.CreatedAt
+	t.UpdatedAt = m.UpdatedAt
 }
 
-func (r *TemplateContent) FromModel(content models.TemplateContent) TemplateContent {
-	return TemplateContent{
-		Grid: struct {
-			Columns int `json:"columns"`
-			Gap     int `json:"gap"`
-		}{
-			Columns: content.Grid.Columns,
-			Gap:     content.Grid.Gap,
-		},
-		Components: content.Components,
-		Variables:  content.Variables,
-	}
-}
-
-func (r *TemplateContent) ToModel() models.TemplateContent {
-	return models.TemplateContent{
-		Grid: struct {
-			Columns int
-			Gap     int
-		}{
-			Columns: r.Grid.Columns,
-			Gap:     r.Grid.Gap,
-		},
-		Components: r.Components,
-		Variables:  r.Variables,
-	}
-}
-
-func (r *TemplateResponse) FromModel(template *models.Template) TemplateResponse {
-	var content TemplateContent
-	return TemplateResponse{
-		ID:          template.ID,
-		Name:        template.Name,
-		Description: template.Description,
-		Content:     content.FromModel(template.Content),
-		CreatedAt:   template.CreatedAt,
-		UpdatedAt:   template.UpdatedAt,
-	}
-}
-
-func (r *TemplateResponse) ToModel() *models.Template {
+func (t *template) ToModel() *models.Template {
 	return &models.Template{
-		ID:          r.ID,
-		Name:        r.Name,
-		Description: r.Description,
-		Content:     r.Content.ToModel(),
-		CreatedAt:   r.CreatedAt,
-		UpdatedAt:   r.UpdatedAt,
+		ID:          t.ID,
+		Name:        t.Name,
+		Description: t.Description,
+		Content:     *t.Content.ToModel(),
+		CreatedAt:   t.CreatedAt,
+		UpdatedAt:   t.UpdatedAt,
 	}
 }
 
-func NewListTemplateResponse(templates []models.Template) *ListTemplateResponse {
-	responses := make([]TemplateResponse, len(templates))
-	for i, template := range templates {
-		responses[i] = NewTemplateResponse(&template)
-	}
-	return &ListTemplateResponse{
-		Templates: responses,
-	}
+type templateContent struct {
+	Grid       templateGrid `json:"grid"`
+	Components []any        `json:"components"` // ComponentInstance[]
+	Variables  []any        `json:"variables"`  // Variable[]
 }
 
-func NewTemplateResponse(template *models.Template) TemplateResponse {
-	var t TemplateResponse
-	return t.FromModel(template)
+type templateGrid struct {
+	Columns int `json:"columns"`
+	Gap     int `json:"gap"`
 }
 
-func NewTemplateResponses(templates []models.Template) []TemplateResponse {
-	responses := make([]TemplateResponse, len(templates))
-	for i, template := range templates {
-		responses[i] = NewTemplateResponse(&template)
+func (t *templateContent) FromModel(m *models.TemplateContent) {
+	t.Grid = templateGrid(m.Grid)
+	t.Components = m.Components
+	t.Variables = m.Variables
+}
+
+func (t *templateContent) ToModel() *models.TemplateContent {
+	return &models.TemplateContent{
+		Grid: models.TemplateGrid{
+			Columns: t.Grid.Columns,
+			Gap:     t.Grid.Gap,
+		},
+		Components: t.Components,
+		Variables:  t.Variables,
 	}
-	return responses
-}
-
-type CompilePreviewRequest struct {
-	TypstCode string            `json:"typstCode"`
-	Variables map[string]string `json:"variables"`
 }

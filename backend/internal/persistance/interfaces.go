@@ -19,5 +19,5 @@ type TemplateRepository interface {
 	DeleteTemplate(ctx context.Context, id string) error
 
 	// List retrieves all templates
-	ListTemplates(ctx context.Context) ([]models.Template, error)
+	ListTemplates(ctx context.Context) ([]*models.Template, error)
 }

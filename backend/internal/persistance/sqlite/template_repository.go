@@ -132,7 +132,7 @@ func (r *TemplateRepository) DeleteTemplate(ctx context.Context, id string) erro
 	return nil
 }
 
-func (r *TemplateRepository) ListTemplates(ctx context.Context) ([]models.Template, error) {
+func (r *TemplateRepository) ListTemplates(ctx context.Context) ([]*models.Template, error) {
 	query := `
 		SELECT id, name, description, content, created_at, updated_at
 		FROM templates
@@ -145,7 +145,7 @@ func (r *TemplateRepository) ListTemplates(ctx context.Context) ([]models.Templa
 	}
 	defer rows.Close()
 
-	var templates []models.Template
+	var templates []*models.Template
 	for rows.Next() {
 		var template models.Template
 		var contentJSON []byte
@@ -166,7 +166,7 @@ func (r *TemplateRepository) ListTemplates(ctx context.Context) ([]models.Templa
 			return nil, fmt.Errorf("failed to unmarshal template content: %w", err)
 		}
 
-		templates = append(templates, template)
+		templates = append(templates, &template)
 	}
 
 	if err := rows.Err(); err != nil {

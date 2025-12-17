@@ -12,11 +12,11 @@ import type { CompileRequest, Template, CreateTemplateRequest, UpdateTemplateReq
  * @returns Blob for the compiled PDF
  */
 export async function previewTemplate(request: CompileRequest): Promise<Blob> {
-  const blob = await apiClient.post('api/templates/preview', {
-    json: request,
-  }).blob();
+    const blob = await apiClient.post('api/templates/preview', {
+        json: request,
+    }).blob();
 
-  return blob;
+    return blob;
 }
 
 /**
@@ -24,8 +24,8 @@ export async function previewTemplate(request: CompileRequest): Promise<Blob> {
  * @returns Array of templates
  */
 export async function listTemplates(): Promise<Template[]> {
-  const response = await apiClient.get('api/templates').json<{ templates: Template[] }>();
-  return response.templates;
+    const response = await apiClient.get('api/templates').json<{ templates: Template[] }>();
+    return response.templates;
 }
 
 /**
@@ -34,7 +34,8 @@ export async function listTemplates(): Promise<Template[]> {
  * @returns Template data
  */
 export async function getTemplate(id: string): Promise<Template> {
-  return await apiClient.get(`api/templates/${id}`).json<Template>();
+    const response = await apiClient.get(`api/templates/${id}`).json<{ template: Template }>();
+    return response.template
 }
 
 /**
@@ -43,9 +44,10 @@ export async function getTemplate(id: string): Promise<Template> {
  * @returns Created template
  */
 export async function createTemplate(request: CreateTemplateRequest): Promise<Template> {
-  return await apiClient.post('api/templates', {
-    json: request,
-  }).json<Template>();
+    const response = await apiClient.post('api/templates', {
+        json: request,
+    }).json<{ template: Template }>();
+    return response.template
 }
 
 /**
@@ -55,9 +57,11 @@ export async function createTemplate(request: CreateTemplateRequest): Promise<Te
  * @returns Updated template
  */
 export async function updateTemplate(id: string, request: UpdateTemplateRequest): Promise<Template> {
-  return await apiClient.put(`api/templates/${id}`, {
-    json: request,
-  }).json<Template>();
+    const response = await apiClient.put(`api/templates/${id}`, {
+        json: request,
+    }).json<{ template: Template }>();
+
+    return response.template
 }
 
 /**
@@ -65,5 +69,5 @@ export async function updateTemplate(id: string, request: UpdateTemplateRequest)
  * @param id - Template ID
  */
 export async function deleteTemplate(id: string): Promise<void> {
-  await apiClient.delete(`api/templates/${id}`);
+    await apiClient.delete(`api/templates/${id}`);
 }

@@ -20,7 +20,17 @@ func (s *Server) handleListTemplates(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := NewListTemplateResponse(templates)
+	templatesDto := make([]template, 0, len(templates))
+	for _, t := range templates {
+		var tDTO template
+		tDTO.FromModel(t)
+		templatesDto = append(templatesDto, tDTO)
+	}
+
+	response := ListTemplateResponse{
+		Templates: templatesDto,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -32,14 +42,22 @@ func (s *Server) handleCreateTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	template := req.ToModel()
-	created, err := s.templateService.CreateTemplate(r.Context(), template)
+	template := template{
+		Name:        req.Name,
+		Description: req.Description,
+		Content:     req.Content,
+	}
+	created, err := s.templateService.CreateTemplate(r.Context(), template.ToModel())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	// TODO: is the the best way?
+	template.FromModel(created)
 
-	response := NewTemplateResponse(created)
+	response := CreateTemplateResponse{
+		Template: template,
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
@@ -52,13 +70,17 @@ func (s *Server) handleGetTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	template, err := s.templateService.GetTemplate(r.Context(), id)
+	foundTemplate, err := s.templateService.GetTemplate(r.Context(), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+	var tDTO template
+	tDTO.FromModel(foundTemplate)
 
-	response := NewTemplateResponse(template)
+	response := GetTemplateResponse{
+		Template: tDTO,
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -76,14 +98,23 @@ func (s *Server) handleUpdateTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	template := req.ToModel(id)
-	updated, err := s.templateService.UpdateTemplate(r.Context(), template)
+	t := template{
+		ID:          id,
+		Name:        req.Name,
+		Description: req.Description,
+		Content:     req.Content,
+	}
+	updated, err := s.templateService.UpdateTemplate(r.Context(), t.ToModel())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	var tDTO template
+	tDTO.FromModel(updated)
 
-	response := NewTemplateResponse(updated)
+	response := UpdateTemplateResponse{
+		Template: tDTO,
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
