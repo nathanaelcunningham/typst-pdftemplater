@@ -87,7 +87,8 @@ func (t *Template) Transition(event eventsourcing.Event) {
 		var updatedContent TemplateContent
 		updatedContent.FromString(newContent)
 		t.Content = updatedContent
-
+		t.Name = e.Name
+		t.Description = e.Description
 		t.UpdatedAt = e.UpdatedAt
 
 	case *TemplateArchivedEvent:
