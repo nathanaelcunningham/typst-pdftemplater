@@ -7,6 +7,7 @@ import {
     defaultTableProps,
     defaultGridContainerProps,
     defaultStackContainerProps,
+    defaultPageBreakProps,
 } from '../types/components';
 
 /**
@@ -24,6 +25,8 @@ export function getDefaultPropsForComponent(componentType: ComponentType): Recor
             return defaultGridContainerProps;
         case 'stack-container':
             return defaultStackContainerProps;
+        case 'page-break':
+            return defaultPageBreakProps;
         default:
             return {};
     }

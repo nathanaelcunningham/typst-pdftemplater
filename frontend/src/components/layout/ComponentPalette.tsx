@@ -7,6 +7,7 @@ export function ComponentPalette() {
         { type: 'text', label: 'Text', icon: '📝' },
         { type: 'image', label: 'Image', icon: '🖼️' },
         { type: 'table', label: 'Table', icon: '📊' },
+        { type: 'page-break', label: 'Page Break', icon: '📄' },
     ];
 
     const layoutComponents: { type: ComponentType; label: string; icon: string }[] = [

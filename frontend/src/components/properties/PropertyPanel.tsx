@@ -4,6 +4,7 @@ import { ImageProperties } from './ImageProperties';
 import { TableProperties } from './TableProperties';
 import { GridContainerProperties } from './GridContainerProperties';
 import { StackContainerProperties } from './StackContainerProperties';
+import { PageBreakProperties } from './PageBreakProperties';
 import type { ComponentInstance } from '../../types/template';
 import { Button, EmptyState } from '../ui';
 
@@ -76,6 +77,7 @@ export function PropertyPanel() {
         {selectedComponent.type === 'table' && <TableProperties component={selectedComponent} />}
         {selectedComponent.type === 'grid-container' && <GridContainerProperties component={selectedComponent} />}
         {selectedComponent.type === 'stack-container' && <StackContainerProperties component={selectedComponent} />}
+        {selectedComponent.type === 'page-break' && <PageBreakProperties component={selectedComponent} />}
       </div>
     </div>
   );

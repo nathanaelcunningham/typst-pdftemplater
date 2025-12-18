@@ -1,6 +1,6 @@
 import type { ComponentInstance } from '../types/template';
 import { hasRelativePosition } from '../types/template';
-import type { TextComponentProps, ImageComponentProps, TableComponentProps, GridContainerProps, StackContainerProps } from '../types/components';
+import type { TextComponentProps, ImageComponentProps, TableComponentProps, GridContainerProps, StackContainerProps, PageBreakComponentProps } from '../types/components';
 
 export function generateTextComponent(component: ComponentInstance): string {
     const props = component.props as TextComponentProps;
@@ -148,10 +148,31 @@ export function generateStackContainerComponent(component: ComponentInstance): s
 )`;
 }
 
+export function generatePageBreakComponent(component: ComponentInstance): string {
+    const props = component.props as PageBreakComponentProps;
+
+    const params: string[] = [];
+
+    if (props.weak) {
+        params.push('weak: true');
+    }
+
+    if (props.to !== 'none') {
+        params.push(`to: "${props.to}"`);
+    }
+
+    if (params.length > 0) {
+        return `#pagebreak(${params.join(', ')})`;
+    }
+
+    return '#pagebreak()';
+}
+
 export const componentGenerators: Record<string, (component: ComponentInstance) => string> = {
     text: generateTextComponent,
     image: generateImageComponent,
     table: generateTableComponent,
     'grid-container': generateGridContainerComponent,
     'stack-container': generateStackContainerComponent,
+    'page-break': generatePageBreakComponent,
 };

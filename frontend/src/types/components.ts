@@ -73,3 +73,13 @@ export const defaultStackContainerProps: StackContainerProps = {
   spacing: 8,
   alignment: 'left',
 };
+
+export interface PageBreakComponentProps {
+  weak: boolean;                                   // Can be skipped if already at page boundary
+  to: 'none' | 'odd' | 'even';                     // Force to odd or even page
+}
+
+export const defaultPageBreakProps: PageBreakComponentProps = {
+  weak: false,
+  to: 'none',
+};

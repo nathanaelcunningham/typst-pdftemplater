@@ -1,6 +1,6 @@
 // Core template data types
 
-export type ComponentType = 'text' | 'image' | 'table' | 'grid-container' | 'stack-container';
+export type ComponentType = 'text' | 'image' | 'table' | 'grid-container' | 'stack-container' | 'page-break';
 
 // Discriminated union for position types
 export type Position = AbsolutePosition | RelativePosition | GridPosition;
