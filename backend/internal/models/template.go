@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/hallgren/eventsourcing"
@@ -81,11 +82,32 @@ func (t *Template) Transition(event eventsourcing.Event) {
 
 	case *TemplateUpdatedEvent:
 		dmp := diffmatchpatch.New()
-		patches, _ := dmp.PatchFromText(e.ContentPatchText)
-		newContent, _ := dmp.PatchApply(patches, t.Content.ToString())
+		patches, err := dmp.PatchFromText(e.ContentPatchText)
+		if err != nil {
+			fmt.Printf("failed to parse patch during transition: %v\n", err)
+			return
+		}
+
+		newContent, results := dmp.PatchApply(patches, t.Content.ToString())
+		// Check if any patches failed to apply
+		allSuccess := true
+		for _, result := range results {
+			if !result {
+				allSuccess = false
+				break
+			}
+		}
+		if !allSuccess {
+			fmt.Printf("failed to apply patch during transition: %s\n", event.AggregateID())
+			return
+		}
 
 		var updatedContent TemplateContent
-		updatedContent.FromString(newContent)
+		if err := updatedContent.FromString(newContent); err != nil {
+			fmt.Printf("failed to unmarshal content during transition: %s\n", event.AggregateID())
+			return
+		}
+
 		t.Content = updatedContent
 		t.Name = e.Name
 		t.Description = e.Description
@@ -96,7 +118,7 @@ func (t *Template) Transition(event eventsourcing.Event) {
 		t.UpdatedAt = e.ArchivedAt
 
 	default:
-		panic("unknown event type")
+		fmt.Printf("unknown event type in transition: %s\n", event.Data())
 	}
 }
 

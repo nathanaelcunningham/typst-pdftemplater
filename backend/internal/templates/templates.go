@@ -93,5 +93,5 @@ func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 }
 
 func (s *Service) ListTemplates(ctx context.Context) []models.TemplateListItem {
-	return s.listProjection.Templates
+	return s.listProjection.GetTemplates()
 }

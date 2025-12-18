@@ -39,7 +39,20 @@ func run() error {
 	aggregate.Register(&models.Template{})
 
 	listProjection := models.NewListTemplatesProjection()
-	go listProjection.Run(context.Background(), es, time.Millisecond*500)
+
+	// Create cancellable context for projection
+	projectionCtx, cancelProjection := context.WithCancel(context.Background())
+	projectionDone := make(chan error, 1)
+
+	// Start projection in background with graceful shutdown support
+	go func() {
+		if err := listProjection.Run(projectionCtx, es, time.Millisecond*500); err != nil {
+			log.Printf("Projection error: %v", err)
+			projectionDone <- err
+		} else {
+			projectionDone <- nil
+		}
+	}()
 
 	templateService := templates.NewService(es, listProjection)
 
@@ -59,6 +72,21 @@ func run() error {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
+	log.Println("Shutting down gracefully...")
+
+	// Cancel projection context to stop event processing
+	cancelProjection()
+
+	// Wait for projection to finish with timeout
+	projectionShutdownTimer := time.After(5 * time.Second)
+	select {
+	case <-projectionDone:
+		log.Println("Projection stopped")
+	case <-projectionShutdownTimer:
+		log.Println("Projection shutdown timed out")
+	}
+
+	// Shutdown HTTP server
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

@@ -2,6 +2,8 @@ package models
 
 import (
 	"context"
+	"fmt"
+	"sync"
 	"time"
 
 	"github.com/hallgren/eventsourcing"
@@ -18,6 +20,7 @@ type TemplateListItem struct {
 }
 
 type ListTemplatesProjection struct {
+	mu        sync.RWMutex
 	Templates []TemplateListItem
 }
 
@@ -27,8 +30,22 @@ func NewListTemplatesProjection() *ListTemplatesProjection {
 	}
 }
 
+// GetTemplates returns a copy of the templates slice in a thread-safe manner
+func (p *ListTemplatesProjection) GetTemplates() []TemplateListItem {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+
+	// Return a copy to prevent external modification
+	result := make([]TemplateListItem, len(p.Templates))
+	copy(result, p.Templates)
+	return result
+}
+
 func (p *ListTemplatesProjection) Build(es *sql.SQLite) *eventsourcing.Projection {
 	return eventsourcing.NewProjection(es.All(0), func(event eventsourcing.Event) error {
+		p.mu.Lock()
+		defer p.mu.Unlock()
+
 		switch e := event.Data().(type) {
 		case *TemplateCreatedEvent:
 			item := TemplateListItem{
@@ -61,7 +78,7 @@ func (p *ListTemplatesProjection) Build(es *sql.SQLite) *eventsourcing.Projectio
 			}
 
 		default:
-			panic("unknown event type")
+			fmt.Printf("unknown event type in transition: %s\n", event.Data())
 		}
 		return nil
 	})
