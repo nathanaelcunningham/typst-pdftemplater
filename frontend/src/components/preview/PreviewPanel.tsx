@@ -1,3 +1,4 @@
+import { AlertCircle, FileText } from 'lucide-react';
 import { useTemplateStore } from '../../store/templateStore';
 import { generateTypst } from '../../generators/typstGenerator';
 import { previewTemplate, HTTPError } from '../../api';
@@ -80,19 +81,7 @@ export function PreviewPanel() {
                     <div className="flex items-center justify-center h-full bg-danger/5 p-8">
                         <div className="max-w-2xl w-full">
                             <div className="text-danger text-center mb-4">
-                                <svg
-                                    className="inline-block w-12 h-12 mb-2"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    />
-                                </svg>
+                                <AlertCircle className="inline-block w-12 h-12 mb-2" />
                                 <h3 className="text-lg font-serif font-semibold">Compilation Error</h3>
                             </div>
                             <pre className="text-xs font-mono bg-paper border-2 border-danger/30 rounded-lg p-4 overflow-auto max-h-96 text-left text-ink leading-relaxed">
@@ -109,19 +98,7 @@ export function PreviewPanel() {
                 ) : (
                     <div className="flex items-center justify-center h-full">
                         <div className="text-center text-slate-lighter">
-                            <svg
-                                className="inline-block w-16 h-16 mb-4 opacity-30"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                />
-                            </svg>
+                            <FileText className="inline-block w-16 h-16 mb-4 opacity-30" />
                             <p className="text-sm font-medium mb-2">Ready to Preview</p>
                             <p className="text-xs opacity-60 max-w-xs mx-auto">Fill in variables and click "Generate Preview" to compile PDF</p>
                         </div>

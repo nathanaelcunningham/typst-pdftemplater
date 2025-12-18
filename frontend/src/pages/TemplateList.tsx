@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Trash2, Tag, Clock } from 'lucide-react';
 import { listTemplates, deleteTemplate } from "../api";
 import type { Template } from "../api/types";
 import { useTemplateStore } from "../store/templateStore";
@@ -177,19 +178,7 @@ export function TemplateList() {
                                         className="text-slate-lighter hover:text-red-600 transition-colors p-1"
                                         title="Delete template"
                                     >
-                                        <svg
-                                            className="w-5 h-5"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                            />
-                                        </svg>
+                                        <Trash2 className="w-5 h-5" />
                                     </button>
                                 </div>
 
@@ -203,37 +192,10 @@ export function TemplateList() {
                                 {/* Metadata */}
                                 <div className="flex items-center gap-4 text-xs text-slate-lighter">
                                     <div className="flex items-center gap-1">
-                                        <svg
-                                            className="w-4 h-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                                            />
-                                        </svg>
-                                        {/* {template.content.components && ( */}
-                                        {/*     <span>{template.content.components.length} components</span> */}
-                                        {/* )} */}
+                                        <Tag className="w-4 h-4" />
                                     </div>
                                     <div className="flex items-center gap-1">
-                                        <svg
-                                            className="w-4 h-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                        </svg>
+                                        <Clock className="w-4 h-4" />
                                         <span>{formatDate(template.updatedAt)}</span>
                                     </div>
                                 </div>
