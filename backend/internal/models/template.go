@@ -123,5 +123,5 @@ func (t *Template) Transition(event eventsourcing.Event) {
 }
 
 func (t *Template) Register(r aggregate.RegisterFunc) {
-	r(&TemplateCreatedEvent{}, &TemplateUpdatedEvent{})
+	r(&TemplateCreatedEvent{}, &TemplateUpdatedEvent{}, &TemplateArchivedEvent{})
 }
