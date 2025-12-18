@@ -13,7 +13,7 @@ func (s *Server) registerRoutes() {
 			r.Post("/", s.handleCreateTemplate)
 			r.Get("/{id}", s.handleGetTemplate)
 			r.Put("/{id}", s.handleUpdateTemplate)
-			r.Delete("/{id}", s.handleDeleteTemplate)
+			r.Delete("/{id}", s.handleArchiveTemplate)
 			r.Post("/preview", s.handlePreview)
 		})
 	})

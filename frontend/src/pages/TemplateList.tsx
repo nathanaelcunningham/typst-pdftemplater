@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, Tag, Clock } from 'lucide-react';
-import { listTemplates, deleteTemplate } from "../api";
+import { Trash2, Tag, Clock, Archive } from 'lucide-react';
+import { listTemplates, archiveTemplate } from "../api";
 import type { Template } from "../api/types";
 import { useTemplateStore } from "../store/templateStore";
 
@@ -42,21 +42,30 @@ export function TemplateList() {
         navigate(`/editor/${templateId}`);
     };
 
-    const handleDeleteTemplate = async (
+    const handleArchiveTemplate = async (
         templateId: string,
         templateName: string,
     ) => {
         const confirmed = confirm(
-            `Delete template "${templateName}"? This cannot be undone.`,
+            `Archive template "${templateName}"?`,
         );
         if (!confirmed) return;
 
         try {
-            await deleteTemplate(templateId);
-            setTemplates(templates.filter((t) => t.id !== templateId));
+            await archiveTemplate(templateId);
+
+            setTemplates(templates.map((t) => {
+                if (t.id === templateId) {
+                    return {
+                        ...t,
+                        archived: true
+                    }
+                }
+                return t
+            }))
         } catch (err) {
-            console.error("Failed to delete template:", err);
-            alert("Failed to delete template. Please try again.");
+            console.error("Failed to archive template:", err);
+            alert("Failed to archive template. Please try again.");
         }
     };
 
@@ -162,35 +171,57 @@ export function TemplateList() {
                         {filteredTemplates.map((template) => (
                             <div
                                 key={template.id}
-                                className="bg-paper border-2 border-cream-dark rounded-lg p-6 hover:border-amber hover:shadow-lg transition-all cursor-pointer group"
+                                className={`border-2 rounded-lg p-6 transition-all cursor-pointer group relative ${
+                                    template.archived
+                                        ? 'bg-slate-100 border-slate-300 opacity-60 hover:opacity-80'
+                                        : 'bg-paper border-cream-dark hover:border-amber hover:shadow-lg'
+                                }`}
                                 onClick={() => handleOpenTemplate(template.id)}
                             >
+                                {/* Archived Badge */}
+                                {template.archived && (
+                                    <div className="absolute top-4 right-4 flex items-center gap-1 px-2 py-1 bg-slate-300 text-slate-600 text-xs font-medium rounded">
+                                        <Archive className="w-3 h-3" />
+                                        <span>ARCHIVED</span>
+                                    </div>
+                                )}
+
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-3">
-                                    <h3 className="text-lg font-serif font-semibold text-ink group-hover:text-amber-dark transition-colors">
+                                    <h3 className={`text-lg font-serif font-semibold transition-colors ${
+                                        template.archived
+                                            ? 'text-slate-600'
+                                            : 'text-ink group-hover:text-amber-dark'
+                                    }`}>
                                         {template.name}
                                     </h3>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeleteTemplate(template.id, template.name);
-                                        }}
-                                        className="text-slate-lighter hover:text-red-600 transition-colors p-1"
-                                        title="Delete template"
-                                    >
-                                        <Trash2 className="w-5 h-5" />
-                                    </button>
+                                    {!template.archived && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleArchiveTemplate(template.id, template.name);
+                                            }}
+                                            className="text-slate-lighter hover:text-red-600 transition-colors p-1"
+                                            title="Delete template"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    )}
                                 </div>
 
                                 {/* Description */}
                                 {template.description && (
-                                    <p className="text-sm text-slate-lighter mb-4 line-clamp-2">
+                                    <p className={`text-sm mb-4 line-clamp-2 ${
+                                        template.archived ? 'text-slate-500' : 'text-slate-lighter'
+                                    }`}>
                                         {template.description}
                                     </p>
                                 )}
 
                                 {/* Metadata */}
-                                <div className="flex items-center gap-4 text-xs text-slate-lighter">
+                                <div className={`flex items-center gap-4 text-xs ${
+                                    template.archived ? 'text-slate-500' : 'text-slate-lighter'
+                                }`}>
                                     <div className="flex items-center gap-1">
                                         <Tag className="w-4 h-4" />
                                     </div>

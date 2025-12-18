@@ -9,21 +9,21 @@ export type { ApiResponse } from './client';
 
 // Export API types
 export type {
-  CompileRequest,
-  CompileResponse,
-  Template,
-  TemplateContent,
-  CreateTemplateRequest,
-  UpdateTemplateRequest,
-  ListTemplatesResponse
+    CompileRequest,
+    CompileResponse,
+    Template,
+    TemplateContent,
+    CreateTemplateRequest,
+    UpdateTemplateRequest,
+    ListTemplatesResponse
 } from './types';
 
 // Export template services
 export {
-  previewTemplate,
-  listTemplates,
-  getTemplate,
-  createTemplate,
-  updateTemplate,
-  deleteTemplate
+    previewTemplate,
+    listTemplates,
+    getTemplate,
+    createTemplate,
+    updateTemplate,
+    archiveTemplate
 } from './templates';

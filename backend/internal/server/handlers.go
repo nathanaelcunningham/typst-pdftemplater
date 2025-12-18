@@ -115,14 +115,14 @@ func (s *Server) handleUpdateTemplate(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func (s *Server) handleDeleteTemplate(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleArchiveTemplate(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if id == "" {
 		http.Error(w, "id is required", http.StatusBadRequest)
 		return
 	}
 
-	if err := s.templateService.DeleteTemplate(r.Context(), id); err != nil {
+	if err := s.templateService.ArchiveTemplate(r.Context(), id); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

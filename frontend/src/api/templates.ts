@@ -65,9 +65,9 @@ export async function updateTemplate(id: string, request: UpdateTemplateRequest)
 }
 
 /**
- * Delete a template
+ * archive a template
  * @param id - Template ID
  */
-export async function deleteTemplate(id: string): Promise<void> {
+export async function archiveTemplate(id: string): Promise<void> {
     await apiClient.delete(`api/templates/${id}`);
 }

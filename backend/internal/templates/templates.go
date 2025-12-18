@@ -73,7 +73,7 @@ func (s *Service) UpdateTemplate(
 	return template, nil
 }
 
-func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
+func (s *Service) ArchiveTemplate(ctx context.Context, id string) error {
 	if id == "" {
 		return fmt.Errorf("template id is required")
 	}
