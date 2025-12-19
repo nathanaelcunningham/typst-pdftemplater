@@ -8,6 +8,7 @@ import {
     defaultGridContainerProps,
     defaultStackContainerProps,
     defaultPageBreakProps,
+    defaultHeadingProps,
 } from '../types/components';
 
 /**
@@ -27,6 +28,8 @@ export function getDefaultPropsForComponent(componentType: ComponentType): Recor
             return defaultStackContainerProps;
         case 'page-break':
             return defaultPageBreakProps;
+        case 'heading':
+            return defaultHeadingProps;
         default:
             return {};
     }

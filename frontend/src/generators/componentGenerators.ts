@@ -1,6 +1,6 @@
 import type { ComponentInstance } from '../types/template';
 import { hasRelativePosition } from '../types/template';
-import type { TextComponentProps, ImageComponentProps, TableComponentProps, GridContainerProps, StackContainerProps, PageBreakComponentProps } from '../types/components';
+import type { TextComponentProps, ImageComponentProps, TableComponentProps, GridContainerProps, StackContainerProps, PageBreakComponentProps, HeadingComponentProps } from '../types/components';
 
 export function generateTextComponent(component: ComponentInstance): string {
     const props = component.props as TextComponentProps;
@@ -168,6 +168,26 @@ export function generatePageBreakComponent(component: ComponentInstance): string
     return '#pagebreak()';
 }
 
+export function generateHeadingComponent(component: ComponentInstance): string {
+    const props = component.props as HeadingComponentProps
+
+
+    let numbered = ''
+    if (props.numbered) {
+        numbered = '#set heading(numbering: "1.")'
+    }
+
+    let content = `${'='.repeat(props.level)} ${props.content}`
+
+    if (props.alignment !== 'left') {
+        content = `#align(${props.alignment})[\n ${content}]`
+    }
+
+    return `${numbered}
+${content}
+    `
+}
+
 export const componentGenerators: Record<string, (component: ComponentInstance) => string> = {
     text: generateTextComponent,
     image: generateImageComponent,
@@ -175,4 +195,5 @@ export const componentGenerators: Record<string, (component: ComponentInstance) 
     'grid-container': generateGridContainerComponent,
     'stack-container': generateStackContainerComponent,
     'page-break': generatePageBreakComponent,
+    heading: generateHeadingComponent
 };

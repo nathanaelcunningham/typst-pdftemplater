@@ -8,6 +8,7 @@ import { GridContainerComponent } from '../template-components/GridContainerComp
 import { StackContainerComponent } from '../template-components/StackContainerComponent';
 import { PageBreakComponent } from '../template-components/PageBreakComponent';
 import { DropZone } from './DropZone';
+import { HeadingComponent } from '../template-components/HeadingComponent';
 
 interface ComponentWrapperProps {
     component: ComponentInstance;
@@ -38,6 +39,8 @@ export function ComponentWrapper({ component }: ComponentWrapperProps) {
                 return <StackContainerComponent component={component} isSelected={isSelected} onClick={handleClick} />;
             case 'page-break':
                 return <PageBreakComponent component={component} isSelected={isSelected} onClick={handleClick} />;
+            case 'heading':
+                return <HeadingComponent component={component} isSelected={isSelected} onClick={handleClick} />;
             default:
                 return null;
         }

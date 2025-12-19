@@ -132,3 +132,32 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
 );
 
 NumberInput.displayName = 'NumberInput';
+
+// Checkbox
+interface CheckboxProps extends BaseFormFieldProps, Omit<ComponentPropsWithoutRef<'input'>, 'type'> {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}
+
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
+  ({ label, helperText, className, checked, onCheckedChange, ...inputProps }, ref) => {
+    return (
+      <div className={className}>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            ref={ref}
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => onCheckedChange(e.target.checked)}
+            className="w-5 h-5 border-2 border-cream-dark rounded text-amber focus:ring-2 focus:ring-amber/20 focus:ring-offset-0 cursor-pointer transition-all"
+            {...inputProps}
+          />
+          <span className="text-sm font-medium text-ink">{label}</span>
+        </label>
+        {helperText && <p className={baseHelperClassName}>{helperText}</p>}
+      </div>
+    );
+  }
+);
+
+Checkbox.displayName = 'Checkbox';
