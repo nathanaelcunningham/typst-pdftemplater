@@ -1,6 +1,6 @@
 import type { ComponentInstance } from '../types/template';
 import { hasRelativePosition } from '../types/template';
-import type { TextComponentProps, ImageComponentProps, TableComponentProps, GridContainerProps, StackContainerProps, PageBreakComponentProps, HeadingComponentProps } from '../types/components';
+import type { TextComponentProps, ImageComponentProps, TableComponentProps, GridContainerProps, StackContainerProps, PageBreakComponentProps, HeadingComponentProps, SpacerComponentProps } from '../types/components';
 
 export function generateTextComponent(component: ComponentInstance): string {
     const props = component.props as TextComponentProps;
@@ -171,21 +171,21 @@ export function generatePageBreakComponent(component: ComponentInstance): string
 export function generateHeadingComponent(component: ComponentInstance): string {
     const props = component.props as HeadingComponentProps
 
-
-    let numbered = ''
-    if (props.numbered) {
-        numbered = '#set heading(numbering: "1.")'
-    }
-
     let content = `${'='.repeat(props.level)} ${props.content}`
 
     if (props.alignment !== 'left') {
         content = `#align(${props.alignment})[\n ${content}]`
     }
 
-    return `${numbered}
-${content}
-    `
+    return content
+}
+
+export function generateSpacerComponent(component: ComponentInstance): string {
+    const props = component.props as SpacerComponentProps
+
+    const spacer = `#${props.direction === 'vertical' ? 'v' : 'h'}(${props.amount}pt)`
+
+    return spacer
 }
 
 export const componentGenerators: Record<string, (component: ComponentInstance) => string> = {
@@ -195,5 +195,6 @@ export const componentGenerators: Record<string, (component: ComponentInstance) 
     'grid-container': generateGridContainerComponent,
     'stack-container': generateStackContainerComponent,
     'page-break': generatePageBreakComponent,
-    heading: generateHeadingComponent
+    heading: generateHeadingComponent,
+    spacer: generateSpacerComponent
 };

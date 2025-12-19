@@ -9,6 +9,7 @@ import { StackContainerComponent } from '../template-components/StackContainerCo
 import { PageBreakComponent } from '../template-components/PageBreakComponent';
 import { DropZone } from './DropZone';
 import { HeadingComponent } from '../template-components/HeadingComponent';
+import { SpacerComponent } from '../template-components/SpacerComponent';
 
 interface ComponentWrapperProps {
     component: ComponentInstance;
@@ -41,6 +42,8 @@ export function ComponentWrapper({ component }: ComponentWrapperProps) {
                 return <PageBreakComponent component={component} isSelected={isSelected} onClick={handleClick} />;
             case 'heading':
                 return <HeadingComponent component={component} isSelected={isSelected} onClick={handleClick} />;
+            case 'spacer':
+                return <SpacerComponent component={component} isSelected={isSelected} onClick={handleClick} />;
             default:
                 return null;
         }

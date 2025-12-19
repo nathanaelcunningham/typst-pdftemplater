@@ -7,7 +7,8 @@ export type ComponentType =
     | 'grid-container'
     | 'stack-container'
     | 'page-break'
-    | 'heading';
+    | 'heading'
+    | 'spacer';
 
 // Discriminated union for position types
 export type Position = AbsolutePosition | RelativePosition | GridPosition;

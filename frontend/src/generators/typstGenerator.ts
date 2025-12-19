@@ -75,9 +75,6 @@ export function generateTypst(state: { components: ComponentInstance[]; grid: Gr
 
             body.push(gridCode);
         }
-
-        // Add spacing between rows
-        body.push('#v(1em)');
     });
 
     // Combine all parts

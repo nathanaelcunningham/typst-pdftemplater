@@ -9,6 +9,7 @@ import {
     defaultStackContainerProps,
     defaultPageBreakProps,
     defaultHeadingProps,
+    defaultSpacerProps,
 } from '../types/components';
 
 /**
@@ -30,6 +31,8 @@ export function getDefaultPropsForComponent(componentType: ComponentType): Recor
             return defaultPageBreakProps;
         case 'heading':
             return defaultHeadingProps;
+        case 'spacer':
+            return defaultSpacerProps;
         default:
             return {};
     }

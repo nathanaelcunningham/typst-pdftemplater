@@ -8,6 +8,7 @@ import { PageBreakProperties } from './PageBreakProperties';
 import type { ComponentInstance } from '../../types/template';
 import { Button, EmptyState } from '../ui';
 import { HeadingProperties } from './HeadingProperties';
+import { SpacerProperties } from './SpacerProperties';
 
 // Helper function to find a component by ID, including nested children
 function findComponentById(components: ComponentInstance[], id: string | null): ComponentInstance | undefined {
@@ -80,6 +81,7 @@ export function PropertyPanel() {
                 {selectedComponent.type === 'stack-container' && <StackContainerProperties component={selectedComponent} />}
                 {selectedComponent.type === 'page-break' && <PageBreakProperties component={selectedComponent} />}
                 {selectedComponent.type === 'heading' && <HeadingProperties component={selectedComponent} />}
+                {selectedComponent.type === 'spacer' && <SpacerProperties component={selectedComponent} />}
             </div>
         </div>
     );

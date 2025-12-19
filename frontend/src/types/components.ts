@@ -97,3 +97,12 @@ export const defaultHeadingProps: HeadingComponentProps = {
     level: 1,
     alignment: 'left'
 }
+
+export interface SpacerComponentProps {
+    direction: "vertical" | "horizontal"
+    amount: number;
+}
+export const defaultSpacerProps: SpacerComponentProps = {
+    direction: "vertical",
+    amount: 10,
+}
